@@ -1,4 +1,4 @@
-package com.example.backend.service;
+package com.arenahub.Service;
 
 import com.example.backend.dto.request.IscrizioneRequest;
 import com.example.backend.dto.response.ConfermaResponse;

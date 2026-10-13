@@ -1,4 +1,4 @@
-package com.example.backend.service;
+package com.arenahub.Service;
 
 import com.example.backend.dto.request.MembroRequest;
 import com.example.backend.dto.request.SquadraRequest;

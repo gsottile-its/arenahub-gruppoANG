@@ -1,4 +1,4 @@
-package com.example.backend.service;
+package com.arenahub.Service;
 
 import com.example.backend.dto.response.PreferitoResponse;
 import com.example.backend.dto.response.TorneoCardPage;

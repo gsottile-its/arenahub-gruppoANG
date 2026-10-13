@@ -1,6 +1,6 @@
-package com.example.backend.service;
+package com.arenahub.Service;
 
-import com.example.backend.dto.request.LoginRequest;
+import com.example.dto.request.LoginRequest;
 import com.example.backend.dto.request.RegistrazioneRequest;
 import com.example.backend.dto.response.LoginResponse;
 import com.example.backend.dto.response.UtenteResponse;
