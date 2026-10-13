@@ -1,0 +1,14 @@
+[
+  {
+    "id": 5,
+    "nome": "Team Alpha",
+    "mioRuolo": "capo_squadra",
+    "membri": 6
+  },
+  {
+    "id": 8,
+    "nome": "Night Owls",
+    "mioRuolo": "giocatore",
+    "membri": 5
+  }
+]

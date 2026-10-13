@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nome": "FPS"
+  },
+  {
+    "id": 2,
+    "nome": "Sportivo"
+  },
+  {
+    "id": 3,
+    "nome": "Picchiaduro"
+  },
+  {
+    "id": 4,
+    "nome": "Corse"
+  },
+  {
+    "id": 5,
+    "nome": "MOBA"
+  },
+  {
+    "id": 6,
+    "nome": "Battle royale"
+  }
+]

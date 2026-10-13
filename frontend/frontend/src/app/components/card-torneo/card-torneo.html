@@ -1,0 +1,61 @@
+@let t = torneo();
+@let completo = pulsante() === 'Completo';
+
+<ng-template #pulsanteAzione>
+  @if (completo) {
+    <span class="btn btn-completo"><span>Completo</span></span>
+  } @else {
+    <button class="btn" [class.btn-verde]="pulsante() === 'Iscriviti'" (click)="apri.emit(t.id)"><span>{{ pulsante() }}</span></button>
+  }
+</ng-template>
+
+@if (vista() === 'griglia') {
+  <article class="card" [class.esaurito]="completo">
+    <button class="immagine" (click)="apri.emit(t.id)" [title]="'Apri ' + t.nome">
+      @if (t.urlImmagine) {
+        <img [src]="t.urlImmagine" [alt]="t.nome" />
+      } @else {
+        <span class="immagine-vuota">{{ t.gioco }}</span>
+      }
+      @if (completo) {
+        <span class="chip-completo">Completo</span>
+      }
+    </button>
+
+    <h3><button class="titolo" (click)="apri.emit(t.id)">{{ t.nome }}</button></h3>
+
+    <ul class="info">
+      <li>🎮 {{ t.gioco }} · {{ t.piattaforme.join(', ') }}</li>
+      <li>👥 {{ formato() }}</li>
+      <li [class.completo]="pieno()">🎟️ @if (pieno()) { Completo · } Posti {{ t.iscritti }}/{{ t.postiMax }}</li>
+    </ul>
+
+    <div class="azioni"><ng-container *ngTemplateOutlet="pulsanteAzione" /></div>
+  </article>
+} @else {
+  <article class="riga" [class.esaurito]="completo">
+    <span class="filigrana" aria-hidden="true">{{ t.gioco }}</span>
+
+    <div class="testo">
+      <h3><button class="titolo" (click)="apri.emit(t.id)">{{ t.nome }}</button></h3>
+      <div class="linea">
+        <span>👥 {{ formato() }}</span>
+        <span>🎮 {{ t.piattaforme.join(' · ') }}</span>
+        <span [class.completo]="pieno()">🎟️ {{ t.iscritti }}/{{ t.postiMax }} posti</span>
+      </div>
+      <div class="azioni"><ng-container *ngTemplateOutlet="pulsanteAzione" /></div>
+    </div>
+
+    <button class="copertina" (click)="apri.emit(t.id)" [title]="'Apri ' + t.nome">
+      @if (t.urlImmagine) {
+        <img [src]="t.urlImmagine" [alt]="t.nome" />
+      } @else {
+        <span class="copertina-vuota">{{ t.gioco }}</span>
+      }
+      @if (completo) {
+        <span class="chip-completo">Completo</span>
+      }
+      <span class="etichetta">{{ t.gioco }}</span>
+    </button>
+  </article>
+}

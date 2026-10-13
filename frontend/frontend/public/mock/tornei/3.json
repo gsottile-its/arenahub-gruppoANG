@@ -1,0 +1,37 @@
+{
+  "id": 3,
+  "nome": "Valorant Cup",
+  "descrizione": "Torneo 5 contro 5 aperto a tutte le squadre.",
+  "urlImmagine": "img/giochi/valorant.webp",
+  "gioco": {
+    "id": 2,
+    "nome": "Valorant",
+    "tipologia": "FPS"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    }
+  ],
+  "giocatoriPerSquadra": 5,
+  "postiMax": 16,
+  "iscritti": 7,
+  "premio": "200 €",
+  "aperturaIscrizioni": "2026-10-01T00:00:00",
+  "chiusuraIscrizioni": "2026-10-15T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": {
+    "id": 41,
+    "stato": "confermata",
+    "squadra": {
+      "id": 5,
+      "nome": "Team Alpha"
+    },
+    "posizioneAttesa": null
+  }
+}

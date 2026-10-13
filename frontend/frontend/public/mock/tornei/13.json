@@ -1,0 +1,37 @@
+{
+  "id": 13,
+  "nome": "Apex Duo Challenge",
+  "descrizione": "Torneo a squadre (2 contro 2) di Apex Legends. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/apex-legends.webp",
+  "gioco": {
+    "id": 17,
+    "nome": "Apex Legends",
+    "tipologia": "FPS"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    },
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 3,
+      "nome": "Xbox"
+    }
+  ],
+  "giocatoriPerSquadra": 2,
+  "postiMax": 20,
+  "iscritti": 20,
+  "premio": "150 €",
+  "aperturaIscrizioni": "2026-09-25T00:00:00",
+  "chiusuraIscrizioni": "2026-10-12T23:59:00",
+  "stato": "iscrizioni_chiuse",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

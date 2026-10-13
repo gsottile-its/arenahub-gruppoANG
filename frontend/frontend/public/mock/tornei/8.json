@@ -1,0 +1,29 @@
+{
+  "id": 8,
+  "nome": "League Clash d'Autunno",
+  "descrizione": "Torneo a squadre (5 contro 5) di League of Legends. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/league-of-legends.webp",
+  "gioco": {
+    "id": 12,
+    "nome": "League of Legends",
+    "tipologia": "MOBA"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    }
+  ],
+  "giocatoriPerSquadra": 5,
+  "postiMax": 16,
+  "iscritti": 11,
+  "premio": "300 €",
+  "aperturaIscrizioni": "2026-10-05T00:00:00",
+  "chiusuraIscrizioni": "2026-10-22T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

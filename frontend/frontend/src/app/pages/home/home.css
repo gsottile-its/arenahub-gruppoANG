@@ -1,0 +1,259 @@
+.hero {
+  position: relative;
+
+  height: 100vh;
+  min-height: 520px;
+  margin-top: calc(-40px - var(--altezza-header));
+  margin-bottom: -40px;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+
+  background: radial-gradient(circle at 50% 30%, #2a3a18 0%, #111 70%);
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(17,17,17,0.45), rgba(17,17,17,0.6) 70%, rgba(17,17,17,0.85));
+}
+
+.hero-contenuto {
+  position: relative;
+  max-width: 900px;
+  padding: var(--altezza-header) 16px 0;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: 1.05;
+}
+
+.sottotitolo {
+  color: var(--testo-tenue);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 640px;
+  margin: 0 auto 32px;
+}
+
+.azioni {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.azioni .btn { background-image: none; }
+
+.presentazione {
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+  padding: 100px 0 40px;
+}
+
+.blocco {
+  --fino-al-bordo: calc(-1 * max(16px, 50vw - 600px));
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+}
+
+.media {
+  position: relative;
+  height: 360px;
+  margin-left: var(--fino-al-bordo);
+  overflow: hidden;
+  background:
+    var(--texture-chiara),
+    radial-gradient(circle at 30% 40%, rgba(195, 255, 107, 0.35), transparent 60%),
+    linear-gradient(135deg, #2f3d1f, #121212);
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 0 100%);
+}
+
+.parola {
+  position: absolute;
+  left: calc(max(16px, 50vw - 600px) + 8px);
+  bottom: 10px;
+  font-family: var(--font-titoli);
+  font-size: 9rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(195, 255, 107, 0.6);
+}
+
+.numero {
+  position: absolute;
+  top: 24px;
+  left: calc(max(16px, 50vw - 600px) + 8px);
+  font-family: var(--font-titoli);
+  font-size: 1.6rem;
+  color: var(--accento);
+}
+
+.testo { padding: 0 0 0 40px; }
+
+.intestazione { display: flex; align-items: center; gap: 18px; }
+.intestazione svg { width: 56px; height: 56px; flex-shrink: 0; fill: var(--accento); }
+.intestazione h2 { margin: 0; font-size: 2.4rem; line-height: 1.05; }
+
+/* barra colorata con la punta a righe: parte accanto al riquadro ed esce dallo schermo */
+.barra {
+  height: 18px;
+  margin: 22px var(--fino-al-bordo) 22px 0;
+  background-color: var(--accento);
+  background-image:
+    linear-gradient(135deg, transparent 0 64px, var(--accento) 64px),
+    repeating-linear-gradient(135deg, transparent 0 5px, rgba(0, 0, 0, 0.35) 5px 8px);
+  clip-path: polygon(22.63px 0, 100% 0, 100% 100%, 4.63px 100%);
+}
+
+.testo p { margin: 0 0 26px; color: var(--testo-tenue); font-size: 1.1rem; line-height: 1.7; }
+
+.inverso { grid-template-columns: 1fr 1.1fr; }
+.inverso .media { order: 2; margin-left: 0; margin-right: var(--fino-al-bordo); clip-path: polygon(16% 0, 100% 0, 100% 100%, 0 100%); }
+.inverso .parola { left: auto; right: calc(max(16px, 50vw - 600px) + 8px); }
+.inverso .numero { left: auto; right: calc(max(16px, 50vw - 600px) + 8px); }
+.inverso .testo { padding: 0 40px 0 0; }
+.inverso .barra {
+  margin: 22px 0 22px var(--fino-al-bordo);
+  background-image:
+    linear-gradient(-45deg, transparent 0 64px, var(--accento) 64px),
+    repeating-linear-gradient(-45deg, transparent 0 5px, rgba(0, 0, 0, 0.35) 5px 8px);
+  clip-path: polygon(0 0, calc(100% - 4.63px) 0, calc(100% - 22.63px) 100%, 0 100%);
+}
+
+@media (max-width: 860px) {
+  .blocco, .inverso { grid-template-columns: 1fr; gap: 24px; }
+  .inverso .media { order: 0; }
+  .media, .inverso .media { height: 220px; margin: 0 var(--fino-al-bordo); clip-path: none; }
+  .parola { font-size: 5rem; }
+  .testo, .inverso .testo { padding: 0; }
+  .barra, .inverso .barra { margin: 18px 0; }
+}
+
+/* sfondo sotto il video: nero più chiaro e motivi appena più chiari */
+.sfondo-presentazione {
+  position: relative;
+  overflow: hidden;
+  margin: 0 calc(50% - 50vw) -40px;
+  padding: 0 max(16px, calc(50vw - 600px)) 60px;
+  background: linear-gradient(to bottom, #111 0, #181a18 220px, #181a18 100%);
+}
+
+.motivi {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* le forme compaiono e spariscono sfumando, senza tagli netti */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 260px, #000 calc(100% - 200px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 260px, #000 calc(100% - 200px), transparent 100%);
+}
+
+.motivi path { fill: rgba(255, 255, 255, 0.025); }
+.motivi .chiaro { fill: rgba(255, 255, 255, 0.04); }
+
+.presentazione { position: relative; }
+
+/* banner lazio digital its academy */
+.banner-its {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 90px;
+  padding: 44px 56px;
+  color: #111;
+  background-color: var(--chiaro);
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.04) 0 1px, transparent 1px 5px);
+  border-top: 3px solid var(--accento);
+  transition: background-color 0.25s;
+  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px));
+}
+
+.banner-logo {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  width: 300px;
+  max-width: 40%;
+  padding-right: 40px;
+  border-right: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.banner-logo img { display: block; width: 100%; height: auto; }
+
+.banner-testo { position: relative; }
+
+.banner-etichetta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #6b6b6b;
+}
+
+.banner-testo h2 {
+  margin: 6px 0 10px;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.banner-testo p {
+  margin: 0;
+  color: #444;
+  line-height: 1.6;
+}
+
+.banner-its:hover { background-color: #fafaf8; }
+
+.banner-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #111;
+  text-decoration: none;
+  padding-bottom: 3px;
+  background: linear-gradient(#a3d468, #a3d468) left bottom / 0 3px no-repeat;
+  transition: background-size 0.35s ease;
+}
+
+/* la barra verde si carica da sinistra a destra */
+.banner-link:hover { background-size: 100% 3px; }
+
+.banner-its:hover .banner-simbolo { opacity: 0.14; }
+
+/* simbolo grande e sbiadito che esce dal bordo destro */
+.banner-simbolo {
+  position: absolute;
+  right: -40px;
+  bottom: -50px;
+  width: 260px;
+  opacity: 0.08;
+  transform: rotate(-12deg);
+  transition: opacity 0.25s;
+}
+
+@media (max-width: 860px) {
+  .banner-its { flex-direction: column; align-items: flex-start; gap: 24px; padding: 32px 24px; }
+  .banner-logo { max-width: 100%; width: 240px; padding: 0 0 24px; border-right: none; border-bottom: 2px solid rgba(0, 0, 0, 0.12); }
+}

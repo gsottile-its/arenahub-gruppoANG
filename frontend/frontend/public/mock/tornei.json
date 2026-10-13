@@ -1,0 +1,199 @@
+{
+  "pagina": 1,
+  "pagineTotali": 1,
+  "tornei": [
+    {
+      "id": 3,
+      "nome": "Valorant Cup",
+      "urlImmagine": "img/giochi/valorant.webp",
+      "gioco": "Valorant",
+      "piattaforme": [
+        "PC"
+      ],
+      "giocatoriPerSquadra": 5,
+      "postiMax": 16,
+      "iscritti": 7,
+      "stato": "iscrizioni_aperte",
+      "mioStato": "confermata"
+    },
+    {
+      "id": 5,
+      "nome": "Sfida di Natale",
+      "urlImmagine": "img/giochi/mario-kart.webp",
+      "gioco": "Mario Kart",
+      "piattaforme": [
+        "Switch"
+      ],
+      "giocatoriPerSquadra": 1,
+      "postiMax": 16,
+      "iscritti": 16,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 8,
+      "nome": "League Clash d'Autunno",
+      "urlImmagine": "img/giochi/league-of-legends.webp",
+      "gioco": "League of Legends",
+      "piattaforme": [
+        "PC"
+      ],
+      "giocatoriPerSquadra": 5,
+      "postiMax": 16,
+      "iscritti": 11,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 9,
+      "nome": "Street Fighter Arena",
+      "urlImmagine": "img/giochi/street-fighter-6.webp",
+      "gioco": "Street Fighter 6",
+      "piattaforme": [
+        "PS5",
+        "PC"
+      ],
+      "giocatoriPerSquadra": 1,
+      "postiMax": 32,
+      "iscritti": 19,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 10,
+      "nome": "Rocket Night",
+      "urlImmagine": "img/giochi/rocket-league.webp",
+      "gioco": "Rocket League",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 3,
+      "postiMax": 8,
+      "iscritti": 3,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 11,
+      "nome": "CS2 Masters",
+      "urlImmagine": "img/giochi/counter-strike-2.webp",
+      "gioco": "Counter-Strike 2",
+      "piattaforme": [
+        "PC"
+      ],
+      "giocatoriPerSquadra": 5,
+      "postiMax": 8,
+      "iscritti": 8,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 12,
+      "nome": "Smash Party",
+      "urlImmagine": "img/giochi/super-smash-bros-ultimate.webp",
+      "gioco": "Super Smash Bros. Ultimate",
+      "piattaforme": [
+        "Switch"
+      ],
+      "giocatoriPerSquadra": 1,
+      "postiMax": 16,
+      "iscritti": 5,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 13,
+      "nome": "Apex Duo Challenge",
+      "urlImmagine": "img/giochi/apex-legends.webp",
+      "gioco": "Apex Legends",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 2,
+      "postiMax": 20,
+      "iscritti": 20,
+      "stato": "iscrizioni_chiuse",
+      "mioStato": null
+    },
+    {
+      "id": 7,
+      "nome": "EA FC Weekend",
+      "urlImmagine": "img/giochi/ea-sports-fc.webp",
+      "gioco": "EA Sports FC",
+      "piattaforme": [
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 1,
+      "postiMax": 32,
+      "iscritti": 32,
+      "stato": "in_corso",
+      "mioStato": null
+    },
+    {
+      "id": 14,
+      "nome": "Overwatch Showdown",
+      "urlImmagine": "img/giochi/overwatch-2.webp",
+      "gioco": "Overwatch 2",
+      "piattaforme": [
+        "PC",
+        "PS5"
+      ],
+      "giocatoriPerSquadra": 5,
+      "postiMax": 8,
+      "iscritti": 8,
+      "stato": "in_corso",
+      "mioStato": "confermata"
+    },
+    {
+      "id": 2,
+      "nome": "Rocket League Open",
+      "urlImmagine": "img/giochi/rocket-league.webp",
+      "gioco": "Rocket League",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 3,
+      "postiMax": 8,
+      "iscritti": 8,
+      "stato": "concluso",
+      "mioStato": "confermata"
+    },
+    {
+      "id": 6,
+      "nome": "Tekken Summer Cup",
+      "urlImmagine": null,
+      "gioco": "Tekken 8",
+      "piattaforme": [
+        "PS5"
+      ],
+      "giocatoriPerSquadra": 1,
+      "postiMax": 16,
+      "iscritti": 14,
+      "stato": "concluso",
+      "mioStato": null
+    },
+    {
+      "id": 1,
+      "nome": "Torneo di Fortnite",
+      "urlImmagine": null,
+      "gioco": "Fortnite",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Switch"
+      ],
+      "giocatoriPerSquadra": 2,
+      "postiMax": 16,
+      "iscritti": 3,
+      "stato": "annullato",
+      "mioStato": null
+    }
+  ]
+}

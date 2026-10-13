@@ -1,0 +1,62 @@
+@if (caricamento()) {
+  <p class="messaggio-caricamento">Caricamento…</p>
+} @else {
+  <form class="modulo largo" (ngSubmit)="salva()" novalidate>
+    <h1>Modifica profilo</h1>
+
+    @if (erroreServer()) {
+      <div class="banner-errore">{{ erroreServer() }}</div>
+    }
+
+    @let e = errori();
+
+    <div class="griglia-campi">
+      <div class="campo">
+        <label for="nickname">Nickname</label>
+        <input id="nickname" name="nickname" [(ngModel)]="nickname" [class.sbagliato]="sbagliato('nickname')" />
+        @if (inviato() && e.nickname) { <span class="aiuto">{{ e.nickname }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" [(ngModel)]="email" [class.sbagliato]="sbagliato('email')" />
+        @if (inviato() && e.email) { <span class="aiuto">{{ e.email }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="nome">Nome</label>
+        <input id="nome" name="nome" [(ngModel)]="nome" [class.sbagliato]="sbagliato('nome')" />
+        @if (inviato() && e.nome) { <span class="aiuto">{{ e.nome }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="cognome">Cognome</label>
+        <input id="cognome" name="cognome" [(ngModel)]="cognome" [class.sbagliato]="sbagliato('cognome')" />
+        @if (inviato() && e.cognome) { <span class="aiuto">{{ e.cognome }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="nuova">Nuova password</label>
+        <input id="nuova" name="nuova" type="password" placeholder="Lascia vuoto per non cambiarla"
+               autocomplete="new-password" [(ngModel)]="nuovaPassword" [class.sbagliato]="sbagliato('nuovaPassword')" />
+        @if (inviato() && e.nuovaPassword) { <span class="aiuto">{{ e.nuovaPassword }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="conferma">Conferma password</label>
+        <input id="conferma" name="conferma" type="password" placeholder="Ripeti la nuova password"
+               autocomplete="new-password" [(ngModel)]="confermaPassword" [class.sbagliato]="sbagliato('confermaPassword')" />
+        @if (inviato() && e.confermaPassword) { <span class="aiuto">{{ e.confermaPassword }}</span> }
+      </div>
+    </div>
+
+    <div class="griglia-campi">
+      <button type="submit" class="btn btn-verde" [disabled]="salvataggio()">
+        {{ salvataggio() ? 'Salvataggio…' : 'Salva modifiche' }}
+      </button>
+      <button type="button" class="btn" (click)="annulla()">Annulla</button>
+    </div>
+
+    <p class="sotto">Le modifiche si applicano solo al tuo account.</p>
+  </form>
+}

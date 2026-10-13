@@ -1,0 +1,154 @@
+<div class="sfondo" (click)="chiudi.emit()">
+  <div class="popup" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <button class="chiudi" (click)="chiudi.emit()" title="Chiudi">✕</button>
+
+    @if (caricamento() && !torneo()) {
+      <p class="messaggio">Caricamento…</p>
+    } @else if (errore()) {
+      <div class="messaggio errore">
+        <p>{{ errore() }}</p>
+        <button class="btn" (click)="chiudi.emit()">Chiudi</button>
+      </div>
+    } @else {
+      @if (torneo(); as t) {
+        <header class="banner">
+          @if (t.urlImmagine) {
+            <img [src]="t.urlImmagine" [alt]="t.nome" />
+          } @else {
+            <span class="banner-vuoto">{{ t.gioco.nome }}</span>
+          }
+          <div class="banner-testo">
+            <span class="stato" [class]="t.stato">{{ etichettaStato() }}</span>
+            <h2>{{ t.nome }}</h2>
+            <p>{{ t.gioco.nome }} · {{ t.gioco.tipologia }}</p>
+          </div>
+        </header>
+
+        <div class="corpo">
+          <section class="informazioni">
+            @if (t.descrizione) {
+              <p class="descrizione">{{ t.descrizione }}</p>
+            }
+
+            <div class="piattaforme">
+              @for (p of piattaforme(); track p) {
+                <span class="chip">{{ p }}</span>
+              }
+            </div>
+
+            <dl class="dati">
+              <div>
+                <dt>Iscrizioni</dt>
+                <dd>{{ t.aperturaIscrizioni | date: 'dd/MM' }} – {{ t.chiusuraIscrizioni | date: 'dd/MM' }}</dd>
+              </div>
+              <div>
+                <dt>Formato</dt>
+                <dd>{{ aSquadre() ? t.giocatoriPerSquadra + ' vs ' + t.giocatoriPerSquadra : '1 vs 1' }}</dd>
+              </div>
+              <div>
+                <dt>Montepremi</dt>
+                <dd>{{ t.premio ?? '—' }}</dd>
+              </div>
+              <div>
+                <dt>Organizzatore</dt>
+                <dd>{{ t.organizzatore.nickname }}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <aside class="pannello">
+            <div class="posti" [class.completo]="pieno()">
+              <div class="posti-testo">
+                <span>Posti</span>
+                <strong>{{ t.iscritti }}/{{ t.postiMax }} {{ aSquadre() ? 'squadre' : 'giocatori' }}</strong>
+              </div>
+              <div class="barra"><span [style.width.%]="percentualePosti()"></span></div>
+              @if (pieno()) {
+                <small>Completo</small>
+              }
+            </div>
+
+            @if (!auth.loggato()) {
+              @if (t.stato === 'iscrizioni_aperte') {
+                <button class="btn btn-verde grande" (click)="accediPerIscriverti()">Accedi per iscriverti</button>
+              } @else {
+                <p class="nota">Le iscrizioni a questo torneo non sono aperte.</p>
+              }
+
+            } @else if (miaIscrizione()) {
+              @let mia = miaIscrizione()!;
+              <p class="stato-iscrizione">
+                @if (mia.squadra) { Iscritto con <strong>{{ mia.squadra.nome }}</strong><br /> }
+                {{ testoStatoIscrizione() }}
+              </p>
+
+              @if (chiediConferma()) {
+                <p class="domanda">Vuoi davvero ritirare {{ mia.squadra ? mia.squadra.nome : 'la tua iscrizione' }} da {{ t.nome }}?</p>
+                <div class="riga">
+                  <button class="btn btn-rosso" [disabled]="inAzione()" (click)="confermaDisiscrizione()">Sì, disiscriviti</button>
+                  <button class="btn" [disabled]="inAzione()" (click)="chiediConferma.set(false)">Annulla</button>
+                </div>
+              } @else if (puoDisiscriversi()) {
+                <div class="riga">
+                  <button class="btn grande" (click)="chiediConferma.set(true)">Disiscriviti</button>
+                </div>
+              } @else {
+                <p class="nota">Il torneo è già iniziato: non puoi più ritirarti.</p>
+              }
+
+            } @else if (t.stato === 'iscrizioni_aperte') {
+              @if (aSquadre()) {
+                @if (squadreCapo().length > 0) {
+                  <label class="squadra">
+                    Squadra da iscrivere
+                    <select [(ngModel)]="idSquadraScelta">
+                      @for (s of squadreCapo(); track s.id) {
+                        <option [ngValue]="s.id">{{ s.nome }} ({{ s.membri }} membri)</option>
+                      }
+                    </select>
+                  </label>
+                } @else {
+                  <p class="nota">Per iscriverti devi essere capo di una squadra.</p>
+                }
+              }
+              @if (pieno()) {
+                <p class="nota avviso">Torneo completo: se ti iscrivi finisci in lista d'attesa.</p>
+              }
+              <div class="riga">
+                <button class="btn btn-verde grande"
+                        [disabled]="inAzione() || (aSquadre() && squadreCapo().length === 0)"
+                        (click)="iscriviti()">
+                  {{ pieno() ? "Lista d'attesa" : 'Iscriviti' }}
+                </button>
+              </div>
+
+            } @else {
+              <p class="nota">Le iscrizioni a questo torneo non sono aperte.</p>
+            }
+          </aside>
+        </div>
+
+        @if (consigliati().length > 0) {
+          <section class="consigliati">
+            <h3>Potrebbero interessarti</h3>
+            <div class="riga-consigliati">
+              @for (c of consigliati(); track c.id) {
+                <button class="mini" (click)="apri.emit(c.id)">
+                  <span class="mini-immagine">
+                    @if (c.urlImmagine) {
+                      <img [src]="c.urlImmagine" [alt]="c.gioco" />
+                    } @else {
+                      {{ c.gioco }}
+                    }
+                  </span>
+                  <strong>{{ c.nome }}</strong>
+                  <small>{{ c.piattaforme.join(', ') }} · {{ c.iscritti }}/{{ c.postiMax }}</small>
+                </button>
+              }
+            </div>
+          </section>
+        }
+      }
+    }
+  </div>
+</div>

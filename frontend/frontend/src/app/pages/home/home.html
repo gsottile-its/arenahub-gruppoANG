@@ -1,0 +1,70 @@
+<section class="hero">
+
+  <video class="hero-video" autoplay muted [muted]="true" loop playsinline>
+    <source src="video/hero.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-velo"></div>
+
+  <div class="hero-contenuto">
+    <h1>Crea il tuo team<br />e vinci il torneo!</h1>
+    <p class="sottotitolo">
+      Trova i tornei dei tuoi giochi preferiti, iscriviti da solo o con la tua squadra
+      e scala il tabellone fino alla vittoria.
+    </p>
+
+    <div class="azioni">
+      <a routerLink="/tornei" class="btn btn-verde">Scopri i tornei</a>
+
+      @if (auth.loggato()) {
+        <a routerLink="/miei-tornei" class="btn">I miei tornei</a>
+      } @else {
+        <a routerLink="/registrazione" class="btn">Crea account</a>
+      }
+    </div>
+  </div>
+</section>
+
+<div class="sfondo-presentazione">
+  <svg class="motivi" viewBox="0 0 1600 1800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path d="M1180 120 1760 -80v640l-460 150 120-330Z" />
+    <path d="M1240 760 1760 590v400l-580 210 180-210Z" />
+    <path d="M-160 600 360 380 220 620-160 840Z" />
+    <path d="M-160 1260 420 980 300 1260-160 1500Z" />
+    <path d="M1100 1380 1760 1130v480l-800 190 280-260Z" />
+    <path class="chiaro" d="M240 1650 780 1430 720 1550 180 1770Z" />
+  </svg>
+
+<div class="presentazione">
+  @for (b of blocchi; track b.titolo; let dispari = $odd) {
+    <section class="blocco" [class.inverso]="dispari">
+      <div class="media">
+        <span class="parola">{{ b.parola }}</span>
+        <span class="numero">0{{ $index + 1 }}</span>
+      </div>
+
+      <div class="testo">
+        <div class="intestazione">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path [attr.d]="b.icona" /></svg>
+          <h2>{{ b.titolo }}</h2>
+        </div>
+        <div class="barra"></div>
+        <p>{{ b.testo }}</p>
+        <a [routerLink]="b.link" class="btn-freccia">{{ b.azione }}</a>
+      </div>
+    </section>
+  }
+</div>
+
+<aside class="banner-its">
+  <a class="banner-logo" href="https://www.laziodigital.it/" target="_blank" rel="noopener">
+    <img src="img/its/logo.png" alt="Lazio Digital ITS Academy" />
+  </a>
+  <div class="banner-testo">
+    <span class="banner-etichetta">Project Work</span>
+    <h2>Nato in aula, pensato per giocare</h2>
+    <p>ArenaHub è il progetto realizzato dagli studenti di Lazio Digital ITS Academy.</p>
+    <a class="banner-link" href="https://www.laziodigital.it/" target="_blank" rel="noopener">Scopri l'academy →</a>
+  </div>
+  <img class="banner-simbolo" src="img/its/simbolo.png" alt="" aria-hidden="true" />
+</aside>
+</div>

@@ -1,0 +1,125 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: var(--altezza-header);
+  padding: 0 40px;
+  background: rgba(17, 17, 17, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.logo {
+  font-family: var(--font-titoli);
+  font-size: 1.6rem;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.logo span { color: var(--accento); }
+
+.menu {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.menu a {
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 1rem;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.menu a:hover { color: var(--accento); }
+
+.menu a.attivo {
+  color: var(--accento);
+  border-bottom-color: var(--accento);
+}
+
+.destra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icona {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #555;
+  background: transparent;
+  color: var(--testo);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.icona:hover { border-color: var(--accento); color: var(--accento); }
+
+.icona svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+}
+
+.profilo { position: relative; }
+
+.tendina {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.tendina a,
+.tendina button {
+  padding: 14px 16px;
+  text-align: left;
+  text-decoration: none;
+  background: none;
+  border: none;
+  color: var(--testo);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tendina a:hover,
+.tendina button:hover { background: #333; color: var(--accento); }
+
+/* login e ciao: scuri con righe sottili, che si illuminano al passaggio del mouse */
+.pulsante-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 20px;
+  border: none;
+  background-color: var(--accento);
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 5px);
+  color: #111;
+  font-family: var(--font-titoli);
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-image 0.25s;
+}
+
+.pulsante-header:hover {
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 5px);
+}
+
+.icona-pulsante { font-size: 1.1rem; }

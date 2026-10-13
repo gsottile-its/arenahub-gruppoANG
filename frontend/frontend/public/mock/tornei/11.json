@@ -1,0 +1,29 @@
+{
+  "id": 11,
+  "nome": "CS2 Masters",
+  "descrizione": "Torneo a squadre (5 contro 5) di Counter-Strike 2. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/counter-strike-2.webp",
+  "gioco": {
+    "id": 15,
+    "nome": "Counter-Strike 2",
+    "tipologia": "FPS"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    }
+  ],
+  "giocatoriPerSquadra": 5,
+  "postiMax": 8,
+  "iscritti": 8,
+  "premio": "500 €",
+  "aperturaIscrizioni": "2026-10-10T00:00:00",
+  "chiusuraIscrizioni": "2026-11-10T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

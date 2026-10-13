@@ -1,0 +1,205 @@
+:host { display: block; }
+
+:host(:hover) { filter: drop-shadow(0 8px 18px rgba(195, 255, 107, 0.18)); }
+
+/* griglia: tutta la card è inclinata con lo stesso angolo, il contenuto viene raddrizzato */
+.card {
+  --inclinazione: 4deg;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px 14px;
+  background: var(--card);
+  transform: skewX(calc(-1 * var(--inclinazione)));
+  transition: transform 0.2s;
+}
+
+.card:hover { transform: skewX(calc(-1 * var(--inclinazione))) translateY(-4px); }
+
+.card h3,
+.card .info,
+.card .btn > span,
+.card .chip-completo { display: block; transform: skewX(var(--inclinazione)); }
+
+.card .immagine img,
+.card .immagine-vuota { transform: skewX(var(--inclinazione)) scale(1.12); }
+
+.immagine {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: none;
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.immagine img,
+.copertina img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.immagine-vuota,
+.copertina-vuota {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px;
+  text-align: center;
+  font-family: var(--font-titoli);
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #2f3d1f, #1a1a1a);
+  transition: transform 0.3s;
+}
+
+h3 { margin: 12px 0 8px; font-size: 1.4rem; }
+
+.titolo {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.titolo:hover { color: var(--accento); }
+
+.info {
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  color: var(--testo-tenue);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.completo { color: #ff8080; }
+
+.azioni { display: flex; }
+.azioni .btn { flex: 1; text-align: center; }
+
+.esaurito .immagine img,
+.esaurito .immagine-vuota,
+.esaurito .copertina img,
+.esaurito .copertina-vuota { filter: grayscale(1) brightness(0.6); }
+
+.chip-completo {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  padding: 4px 10px;
+  background: #ff4d4d;
+  color: #fff;
+  font-family: var(--font-titoli);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* lista: riga larga come le schede dei personaggi di smash bros */
+.riga {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 38%;
+  min-height: 170px;
+  overflow: hidden;
+  background-color: var(--card);
+  background-image: var(--texture-chiara);
+  transition: transform 0.2s;
+}
+
+.riga:hover { transform: translateX(4px); }
+.riga:hover .copertina img,
+.riga:hover .copertina-vuota { transform: scale(1.05); }
+
+.filigrana {
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-titoli);
+  font-size: 9rem;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.035);
+  pointer-events: none;
+}
+
+.testo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 22px 28px;
+}
+
+.riga h3 { margin: 0; font-size: 2.4rem; line-height: 1; }
+
+.linea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 0;
+  padding-top: 10px;
+  border-top: 1px solid #444;
+  color: var(--testo-tenue);
+}
+
+.linea span { padding: 0 18px; border-left: 2px solid #3a3a3a; }
+.linea span:first-child { padding-left: 0; border-left: none; }
+
+.riga .azioni .btn { flex: 0 0 auto; min-width: 180px; }
+
+.copertina {
+  position: relative;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  cursor: pointer;
+  background: #1a1a1a;
+  clip-path: polygon(16% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.copertina-vuota { font-size: 2.2rem; }
+.copertina .chip-completo { left: auto; right: 16px; }
+
+.etichetta {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 6px 22px 6px 34px;
+  background: #3a3a3a;
+  color: var(--testo);
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+  clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+@media (max-width: 640px) {
+  .riga { grid-template-columns: 1fr; }
+  .copertina { order: -1; height: 140px; clip-path: none; }
+  .riga h3 { font-size: 1.8rem; }
+}
+
+.btn-completo,
+.btn-completo:hover {
+  background-color: transparent;
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 77, 77, 0.12) 0 1px, transparent 1px 5px);
+  color: #ff8080;
+  border: 1px solid #ff4d4d;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}

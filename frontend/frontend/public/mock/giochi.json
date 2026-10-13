@@ -1,0 +1,110 @@
+[
+  {
+    "id": 17,
+    "nome": "Apex Legends",
+    "descrizione": null,
+    "tipologia": {
+      "id": 1,
+      "nome": "FPS"
+    }
+  },
+  {
+    "id": 15,
+    "nome": "Counter-Strike 2",
+    "descrizione": null,
+    "tipologia": {
+      "id": 1,
+      "nome": "FPS"
+    }
+  },
+  {
+    "id": 18,
+    "nome": "EA Sports FC",
+    "descrizione": null,
+    "tipologia": {
+      "id": 2,
+      "nome": "Sportivo"
+    }
+  },
+  {
+    "id": 21,
+    "nome": "Fortnite",
+    "descrizione": null,
+    "tipologia": {
+      "id": 6,
+      "nome": "Battle royale"
+    }
+  },
+  {
+    "id": 12,
+    "nome": "League of Legends",
+    "descrizione": null,
+    "tipologia": {
+      "id": 5,
+      "nome": "MOBA"
+    }
+  },
+  {
+    "id": 11,
+    "nome": "Mario Kart",
+    "descrizione": null,
+    "tipologia": {
+      "id": 4,
+      "nome": "Corse"
+    }
+  },
+  {
+    "id": 19,
+    "nome": "Overwatch 2",
+    "descrizione": null,
+    "tipologia": {
+      "id": 1,
+      "nome": "FPS"
+    }
+  },
+  {
+    "id": 14,
+    "nome": "Rocket League",
+    "descrizione": null,
+    "tipologia": {
+      "id": 2,
+      "nome": "Sportivo"
+    }
+  },
+  {
+    "id": 13,
+    "nome": "Street Fighter 6",
+    "descrizione": null,
+    "tipologia": {
+      "id": 3,
+      "nome": "Picchiaduro"
+    }
+  },
+  {
+    "id": 16,
+    "nome": "Super Smash Bros. Ultimate",
+    "descrizione": null,
+    "tipologia": {
+      "id": 3,
+      "nome": "Picchiaduro"
+    }
+  },
+  {
+    "id": 20,
+    "nome": "Tekken 8",
+    "descrizione": null,
+    "tipologia": {
+      "id": 3,
+      "nome": "Picchiaduro"
+    }
+  },
+  {
+    "id": 2,
+    "nome": "Valorant",
+    "descrizione": "Sparatutto tattico 5 contro 5",
+    "tipologia": {
+      "id": 1,
+      "nome": "FPS"
+    }
+  }
+]

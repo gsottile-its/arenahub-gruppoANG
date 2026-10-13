@@ -1,0 +1,33 @@
+{
+  "id": 7,
+  "nome": "EA FC Weekend",
+  "descrizione": "Torneo individuale di EA Sports FC. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/ea-sports-fc.webp",
+  "gioco": {
+    "id": 18,
+    "nome": "EA Sports FC",
+    "tipologia": "Sportivo"
+  },
+  "piattaforme": [
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 3,
+      "nome": "Xbox"
+    }
+  ],
+  "giocatoriPerSquadra": 1,
+  "postiMax": 32,
+  "iscritti": 32,
+  "premio": "100 €",
+  "aperturaIscrizioni": "2026-09-20T00:00:00",
+  "chiusuraIscrizioni": "2026-10-08T23:59:00",
+  "stato": "in_corso",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

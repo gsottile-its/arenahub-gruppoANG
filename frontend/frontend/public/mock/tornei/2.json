@@ -1,0 +1,45 @@
+{
+  "id": 2,
+  "nome": "Rocket League Open",
+  "descrizione": "Torneo a squadre (3 contro 3) di Rocket League. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/rocket-league.webp",
+  "gioco": {
+    "id": 14,
+    "nome": "Rocket League",
+    "tipologia": "Sportivo"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    },
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 3,
+      "nome": "Xbox"
+    }
+  ],
+  "giocatoriPerSquadra": 3,
+  "postiMax": 8,
+  "iscritti": 8,
+  "premio": "80 €",
+  "aperturaIscrizioni": "2026-09-01T00:00:00",
+  "chiusuraIscrizioni": "2026-09-18T23:59:00",
+  "stato": "concluso",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": {
+    "id": 31,
+    "stato": "confermata",
+    "squadra": {
+      "id": 5,
+      "nome": "Team Alpha"
+    },
+    "posizioneAttesa": null
+  }
+}

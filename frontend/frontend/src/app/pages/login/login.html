@@ -1,0 +1,35 @@
+<form class="modulo" (ngSubmit)="accedi()" novalidate>
+  <h1>Accedi ad ArenaHub</h1>
+
+  @if (erroreServer()) {
+    <div class="banner-errore">{{ erroreServer() }}. Riprova.</div>
+  }
+
+  <div class="campo">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" placeholder="Inserisci email" autocomplete="email"
+           [(ngModel)]="email" [class.sbagliato]="erroreServer() || (inviato() && !emailValida())" />
+    @if (inviato() && !emailValida()) {
+      <span class="aiuto">Inserisci un'email valida</span>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" placeholder="Inserisci password" autocomplete="current-password"
+           [(ngModel)]="password" [class.sbagliato]="erroreServer() || (inviato() && password === '')" />
+    @if (inviato() && password === '' && !erroreServer()) {
+      <span class="aiuto">La password è obbligatoria</span>
+    }
+  </div>
+
+  <button type="submit" class="btn btn-verde" [disabled]="caricamento()">
+    {{ caricamento() ? 'Accesso in corso…' : 'Accedi' }}
+  </button>
+
+  <p class="sotto">Non sei registrato? <a routerLink="/registrazione">Registrati</a></p>
+
+  @if (modalitaMock) {
+    <p class="sotto">Dati di prova: {{ emailProva }} · {{ passwordProva }}</p>
+  }
+</form>

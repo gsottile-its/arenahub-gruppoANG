@@ -1,0 +1,33 @@
+{
+  "id": 9,
+  "nome": "Street Fighter Arena",
+  "descrizione": "Torneo individuale di Street Fighter 6. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/street-fighter-6.webp",
+  "gioco": {
+    "id": 13,
+    "nome": "Street Fighter 6",
+    "tipologia": "Picchiaduro"
+  },
+  "piattaforme": [
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 1,
+      "nome": "PC"
+    }
+  ],
+  "giocatoriPerSquadra": 1,
+  "postiMax": 32,
+  "iscritti": 19,
+  "premio": "100 €",
+  "aperturaIscrizioni": "2026-10-10T00:00:00",
+  "chiusuraIscrizioni": "2026-10-28T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

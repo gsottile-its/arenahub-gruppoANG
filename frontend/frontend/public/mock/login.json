@@ -1,0 +1,8 @@
+{
+  "token": "eyJhbGciOi-token-finto-per-i-mock",
+  "utente": {
+    "id": 10,
+    "nickname": "lubaba",
+    "ruolo": "utente"
+  }
+}

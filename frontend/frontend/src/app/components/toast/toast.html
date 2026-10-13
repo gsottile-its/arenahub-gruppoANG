@@ -1,0 +1,5 @@
+<div class="contenitore">
+  @for (m of toast.messaggi(); track m.id) {
+    <div class="toast" [class]="m.colore" (click)="toast.chiudi(m.id)">{{ m.testo }}</div>
+  }
+</div>

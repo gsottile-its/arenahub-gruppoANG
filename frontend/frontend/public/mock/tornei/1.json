@@ -1,0 +1,37 @@
+{
+  "id": 1,
+  "nome": "Torneo di Fortnite",
+  "descrizione": "Torneo a squadre (2 contro 2) di Fortnite. Iscriviti e scala il tabellone!",
+  "urlImmagine": null,
+  "gioco": {
+    "id": 21,
+    "nome": "Fortnite",
+    "tipologia": "Battle royale"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    },
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 4,
+      "nome": "Switch"
+    }
+  ],
+  "giocatoriPerSquadra": 2,
+  "postiMax": 16,
+  "iscritti": 3,
+  "premio": null,
+  "aperturaIscrizioni": "2026-08-15T00:00:00",
+  "chiusuraIscrizioni": "2026-09-03T23:59:00",
+  "stato": "annullato",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

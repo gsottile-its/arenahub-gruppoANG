@@ -1,0 +1,29 @@
+{
+  "id": 6,
+  "nome": "Tekken Summer Cup",
+  "descrizione": "Torneo individuale di Tekken 8. Iscriviti e scala il tabellone!",
+  "urlImmagine": null,
+  "gioco": {
+    "id": 20,
+    "nome": "Tekken 8",
+    "tipologia": "Picchiaduro"
+  },
+  "piattaforme": [
+    {
+      "id": 2,
+      "nome": "PS5"
+    }
+  ],
+  "giocatoriPerSquadra": 1,
+  "postiMax": 16,
+  "iscritti": 14,
+  "premio": null,
+  "aperturaIscrizioni": "2026-08-01T00:00:00",
+  "chiusuraIscrizioni": "2026-08-27T23:59:00",
+  "stato": "concluso",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

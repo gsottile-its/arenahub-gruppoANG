@@ -1,0 +1,134 @@
+<div class="intestazione">
+  <h1>{{ titolo() }}</h1>
+
+  <div class="viste">
+    <button [class.attivo]="vista() === 'griglia'" (click)="vista.set('griglia')" title="Vista a griglia">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
+        <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
+        <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
+        <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
+      </svg>
+    </button>
+    <button [class.attivo]="vista() === 'lista'" (click)="vista.set('lista')" title="Vista a lista">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="3" width="20" height="4" rx="1" />
+        <rect x="2" y="10" width="20" height="4" rx="1" />
+        <rect x="2" y="17" width="20" height="4" rx="1" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="barra-strumenti">
+  <label class="cerca">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+    <input type="search" placeholder="Cerca un torneo o un gioco…" [ngModel]="ricerca()" (ngModelChange)="ricerca.set($event)" />
+  </label>
+
+  <button class="pulsante-filtri" [class.aperto]="pannelloFiltri()" (click)="pannelloFiltri.set(!pannelloFiltri())">
+    <span class="etichetta">
+      Filtri
+      @if (filtriAttivi() > 0) {
+        <span class="conteggio">{{ filtriAttivi() }}</span>
+      }
+    </span>
+  </button>
+</div>
+
+@if (pannelloFiltri()) {
+  <div class="pannello-filtri">
+    <label>
+      Categoria
+      <select [ngModel]="idTipologia()" (ngModelChange)="scegliTipologia($event)">
+        <option [ngValue]="null">Tutte</option>
+        @for (t of tipologie(); track t.id) {
+          <option [ngValue]="t.id">{{ t.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Gioco
+      <select [ngModel]="nomeGioco()" (ngModelChange)="nomeGioco.set($event)">
+        <option [ngValue]="null">Tutti</option>
+        @for (g of giochiDellaCategoria(); track g.id) {
+          <option [ngValue]="g.nome">{{ g.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Piattaforma
+      <select [ngModel]="nomePiattaforma()" (ngModelChange)="nomePiattaforma.set($event)">
+        <option [ngValue]="null">Tutte</option>
+        @for (p of piattaforme(); track p.id) {
+          <option [ngValue]="p.nome">{{ p.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Squadre
+      <select [ngModel]="formato()" (ngModelChange)="formato.set($event)">
+        <option [ngValue]="null">Tutte</option>
+        @for (f of formati; track f) {
+          <option [ngValue]="f">{{ f === 1 ? '1 vs 1' : f === 5 ? '5 vs 5 o più' : f + ' vs ' + f }}</option>
+        }
+      </select>
+    </label>
+    <button class="azzera" (click)="azzeraFiltri()">Azzera</button>
+  </div>
+}
+
+<div class="filtri">
+  @for (f of filtriStato; track f.testo) {
+    <button class="filtro" [class.attivo]="filtroStato() === f.stato" (click)="scegliStato(f.stato)">
+      <span class="etichetta">
+        @if (f.stato) {
+          <span class="pallino" [class]="f.stato"></span>
+        }
+        {{ f.testo }}
+      </span>
+    </button>
+  }
+</div>
+
+@if (caricamento()) {
+  <p class="messaggio">Caricamento…</p>
+} @else if (errore()) {
+  <div class="messaggio errore">
+    {{ errore() }}
+    <button class="btn" (click)="ricarica()">Riprova</button>
+  </div>
+} @else {
+  @if ((ricerca() || filtriAttivi() > 0) && pagineTotali() > 1) {
+    <p class="nota">Ricerca e filtri si applicano ai tornei di questa pagina.</p>
+  }
+
+  <div class="elenco" [class.lista]="vista() === 'lista'">
+    @for (t of torneiFiltrati(); track t.id) {
+      <app-card-torneo [torneo]="t" [vista]="vista()" (apri)="apriDettaglio($event)" />
+    } @empty {
+      @if (tornei().length > 0) {
+        <div class="messaggio">
+          Nessun torneo corrisponde alla ricerca.
+          <button class="btn" (click)="azzeraFiltri()">Azzera filtri</button>
+        </div>
+      } @else {
+        <p class="messaggio">{{ messaggioVuoto() }}</p>
+      }
+    }
+  </div>
+
+  @if (pagineTotali() > 1) {
+    <nav class="paginazione">
+      <button [disabled]="pagina() === 1" (click)="vaiAPagina(pagina() - 1)"><span>‹</span></button>
+      @for (n of numeriPagina(); track n) {
+        <button [class.attivo]="n === pagina()" (click)="vaiAPagina(n)"><span>{{ n }}</span></button>
+      }
+      <button [disabled]="pagina() === pagineTotali()" (click)="vaiAPagina(pagina() + 1)"><span>›</span></button>
+    </nav>
+  }
+}
+
+@if (idAperto(); as id) {
+  <app-dettaglio-torneo [idTorneo]="id" (chiudi)="chiudiDettaglio()" (apri)="apriDettaglio($event)" (cambiato)="ricarica()" />
+}

@@ -1,0 +1,29 @@
+{
+  "id": 5,
+  "nome": "Sfida di Natale",
+  "descrizione": "Torneo individuale di Mario Kart. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/mario-kart.webp",
+  "gioco": {
+    "id": 11,
+    "nome": "Mario Kart",
+    "tipologia": "Corse"
+  },
+  "piattaforme": [
+    {
+      "id": 4,
+      "nome": "Switch"
+    }
+  ],
+  "giocatoriPerSquadra": 1,
+  "postiMax": 16,
+  "iscritti": 16,
+  "premio": null,
+  "aperturaIscrizioni": "2026-11-20T00:00:00",
+  "chiusuraIscrizioni": "2026-12-15T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}
