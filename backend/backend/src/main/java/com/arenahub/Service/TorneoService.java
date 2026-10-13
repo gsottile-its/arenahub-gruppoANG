@@ -1,26 +1,26 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.request.TorneoRequest;
-import com.example.backend.dto.request.TorneoUpdateRequest;
-import com.example.backend.dto.response.StatoResponse;
-import com.example.backend.dto.response.TorneoCardPage;
-import com.example.backend.dto.response.TorneoCardResponse;
-import com.example.backend.dto.response.TorneoCreatoResponse;
-import com.example.backend.dto.response.TorneoDettaglioResponse;
-import com.example.backend.entity.Gioco;
-import com.example.backend.entity.Piattaforma;
-import com.example.backend.entity.Torneo;
-import com.example.backend.entity.enums.IscrizioneStato;
-import com.example.backend.entity.enums.TorneoStato;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.GiocoRepository;
-import com.example.backend.repository.IscrizioneRepository;
-import com.example.backend.repository.PartitaRepository;
-import com.example.backend.repository.PiattaformaRepository;
-import com.example.backend.repository.TorneoRepository;
-import com.example.backend.repository.TorneoSpecs;
-import com.example.backend.repository.UtenteRepository;
-import com.example.backend.security.UtenteLoggato;
+import com.arenahub.dto.request.TorneoRequest;
+import com.arenahub.dto.request.TorneoUpdateRequest;
+import com.arenahub.dto.response.StatoResponse;
+import com.arenahub.dto.response.TorneoCardPage;
+import com.arenahub.dto.response.TorneoCardResponse;
+import com.arenahub.dto.response.TorneoCreatoResponse;
+import com.arenahub.dto.response.TorneoDettaglioResponse;
+import com.arenahub.entity.Gioco;
+import com.arenahub.entity.Piattaforma;
+import com.arenahub.entity.Torneo;
+import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.entity.enums.TorneoStato;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.GiocoRepository;
+import com.arenahub.repository.IscrizioneRepository;
+import com.arenahub.repository.PartitaRepository;
+import com.arenahub.repository.PiattaformaRepository;
+import com.arenahub.repository.TorneoRepository;
+import com.arenahub.repository.TorneoSpecs;
+import com.arenahub.repository.UtenteRepository;
+import com.arenahub.security.UtenteLoggato;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,7 +65,7 @@ public class TorneoService {
     @Transactional(readOnly = true)
     public TorneoCardPage elenco(String stato, String iscritto, int pagina, UtenteLoggato utente) {
         boolean admin = utente != null && utente.isAdmin();
-        Integer idUtente = utente == null ? null : utente.id();
+        Long idUtente = utente == null ? null : utente.id();
 
         TorneoStato filtro = null;
         if (stato != null && !stato.isBlank()) {
@@ -111,7 +111,7 @@ public class TorneoService {
     }
 
     @Transactional(readOnly = true)
-    public TorneoDettaglioResponse dettaglio(Integer id, UtenteLoggato utente) {
+    public TorneoDettaglioResponse dettaglio(Long id, UtenteLoggato utente) {
         Torneo t = trova(id);
         boolean admin = utente != null && utente.isAdmin();
         if (t.getStato() == TorneoStato.bozza && !admin) {
@@ -120,11 +120,11 @@ public class TorneoService {
         return mapper.toDettaglio(t, utente == null ? null : utente.id());
     }
 
-    public TorneoCreatoResponse crea(TorneoRequest r, Integer idAdmin) {
+    public TorneoCreatoResponse crea(TorneoRequest r, Long idAdmin) {
         Gioco gioco = giocoRepository.findById(r.idGioco())
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Gioco non trovato"));
         Set<Piattaforma> piattaforme = caricaPiattaforme(r.idPiattaforme());
-        validaDate(r.aperturaIscrizioni(), r.chiusuraIscrizioni(), r.dataInizio(), r.dataFine());
+        validaDate(r.aperturaIscrizioni(), r.chiusuraIscrizioni());
 
         Torneo t = new Torneo();
         t.setOrganizzatore(utenteRepository.getReferenceById(idAdmin));
@@ -132,20 +132,17 @@ public class TorneoService {
         t.setPiattaforme(piattaforme);
         t.setNome(r.nome());
         t.setPremio(r.premio());
-        t.setDataInizio(r.dataInizio());
-        t.setDataFine(r.dataFine());
         t.setAperturaIscrizioni(r.aperturaIscrizioni());
         t.setChiusuraIscrizioni(r.chiusuraIscrizioni());
         t.setGiocatoriPerSquadra(r.giocatoriPerSquadra());
         t.setPostiMax(r.postiMax());
         t.setDescrizione(r.descrizione());
-        t.setRegolamento(r.regolamento());
         t.setStato(TorneoStato.bozza);
 
         return mapper.toCreato(torneoRepository.save(t));
     }
 
-    public TorneoDettaglioResponse modifica(Integer id, TorneoUpdateRequest r) {
+    public TorneoDettaglioResponse modifica(Long id, TorneoUpdateRequest r) {
         Torneo t = trova(id);
         if (!MODIFICABILI.contains(t.getStato())) {
             throw new ApiException(HttpStatus.CONFLICT, "Il torneo non è più modificabile");
@@ -180,17 +177,14 @@ public class TorneoService {
         if (r.nome() != null) t.setNome(r.nome());
         if (r.premio() != null) t.setPremio(r.premio());
         if (r.descrizione() != null) t.setDescrizione(r.descrizione());
-        if (r.regolamento() != null) t.setRegolamento(r.regolamento());
-        if (r.dataInizio() != null) t.setDataInizio(r.dataInizio());
-        if (r.dataFine() != null) t.setDataFine(r.dataFine());
         if (r.aperturaIscrizioni() != null) t.setAperturaIscrizioni(r.aperturaIscrizioni());
         if (r.chiusuraIscrizioni() != null) t.setChiusuraIscrizioni(r.chiusuraIscrizioni());
 
-        validaDate(t.getAperturaIscrizioni(), t.getChiusuraIscrizioni(), t.getDataInizio(), t.getDataFine());
+        validaDate(t.getAperturaIscrizioni(), t.getChiusuraIscrizioni());
         return mapper.toDettaglio(t, null);
     }
 
-    public StatoResponse cambiaStato(Integer id, TorneoStato nuovo) {
+    public StatoResponse cambiaStato(Long id, TorneoStato nuovo) {
         Torneo t = trova(id);
         if (!TRANSIZIONI.get(t.getStato()).contains(nuovo)) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
@@ -204,7 +198,7 @@ public class TorneoService {
         return new StatoResponse(t.getId(), t.getStato());
     }
 
-    private Torneo trova(Integer id) {
+    private Torneo trova(Long id) {
         return torneoRepository.findById(id).orElseThrow(this::nonTrovato);
     }
 
@@ -212,8 +206,8 @@ public class TorneoService {
         return new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato");
     }
 
-    private Set<Piattaforma> caricaPiattaforme(List<Integer> ids) {
-        Set<Integer> richiesti = new HashSet<>(ids);
+    private Set<Piattaforma> caricaPiattaforme(List<Long> ids) {
+        Set<Long> richiesti = new HashSet<>(ids);
         List<Piattaforma> trovate = piattaformaRepository.findAllById(richiesti);
         if (trovate.size() != richiesti.size()) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Piattaforma non trovata");
@@ -221,19 +215,10 @@ public class TorneoService {
         return new HashSet<>(trovate);
     }
 
-    private void validaDate(LocalDateTime apertura, LocalDateTime chiusura,
-                            LocalDateTime inizio, LocalDateTime fine) {
+    private void validaDate(LocalDateTime apertura, LocalDateTime chiusura) {
         if (!apertura.isBefore(chiusura)) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "L'apertura delle iscrizioni deve essere prima della chiusura");
-        }
-        if (chiusura.isAfter(inizio)) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Le iscrizioni devono chiudersi prima dell'inizio del torneo");
-        }
-        if (fine != null && fine.isBefore(inizio)) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "La fine del torneo deve essere dopo l'inizio");
         }
     }
 }

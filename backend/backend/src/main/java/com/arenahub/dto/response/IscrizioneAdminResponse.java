@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 /** tipo vale "squadra" oppure "utente". */
 public record IscrizioneAdminResponse(
-        Integer id,
+        Long id,
         String nome,
         String tipo,
         LocalDateTime dataIscrizione,

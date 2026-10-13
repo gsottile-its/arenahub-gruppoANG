@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 /** squadra e utente: uno dei due e' null (squadra nei tornei a squadre, utente nei tornei 1 vs 1). */
 public record IscrizioneResponse(
-        Integer id,
-        Integer idTorneo,
+        Long id,
+        Long idTorneo,
         IscrizioneStato stato,
         SquadraBreve squadra,
         UtenteBreve utente,

@@ -1,17 +1,17 @@
 package com.arenahub.Service;
 
-import com.example.dto.request.LoginRequest;
-import com.example.backend.dto.request.RegistrazioneRequest;
-import com.example.backend.dto.response.LoginResponse;
-import com.example.backend.dto.response.UtenteResponse;
-import com.example.backend.entity.Utente;
-import com.example.backend.entity.enums.RuoloUtente;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.UtenteRepository;
-import com.example.backend.security.JwtService;
+import com.arenahub.dto.request.LoginRequest;
+import com.arenahub.dto.request.RegistrazioneRequest;
+import com.arenahub.dto.response.LoginResponse;
+import com.arenahub.dto.response.UtenteResponse;
+import com.arenahub.entity.Utente;
+import com.arenahub.entity.enums.RuoloUtente;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.UtenteRepository;
+import com.arenahub.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import com.example.backend.security.PasswordService;
+import com.arenahub.security.PasswordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +51,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public UtenteResponse me(Integer idUtente) {
+    public UtenteResponse me(Long idUtente) {
         Utente u = utenteRepository.findById(idUtente)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Autenticazione richiesta"));
         return UtenteResponse.da(u);

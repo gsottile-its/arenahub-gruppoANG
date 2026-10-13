@@ -1,20 +1,20 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.request.RisultatoRequest;
-import com.example.backend.dto.request.TabelloneRequest;
-import com.example.backend.dto.response.PartiteResponse;
-import com.example.backend.dto.response.RisultatoResponse;
-import com.example.backend.dto.response.TabelloneResponse;
-import com.example.backend.entity.Iscrizione;
-import com.example.backend.entity.Partita;
-import com.example.backend.entity.Torneo;
-import com.example.backend.entity.enums.IscrizioneStato;
-import com.example.backend.entity.enums.PartitaStato;
-import com.example.backend.entity.enums.TorneoStato;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.IscrizioneRepository;
-import com.example.backend.repository.PartitaRepository;
-import com.example.backend.repository.TorneoRepository;
+import com.arenahub.dto.request.RisultatoRequest;
+import com.arenahub.dto.request.TabelloneRequest;
+import com.arenahub.dto.response.PartiteResponse;
+import com.arenahub.dto.response.RisultatoResponse;
+import com.arenahub.dto.response.TabelloneResponse;
+import com.arenahub.entity.Iscrizione;
+import com.arenahub.entity.Partita;
+import com.arenahub.entity.Torneo;
+import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.entity.enums.PartitaStato;
+import com.arenahub.entity.enums.TorneoStato;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.IscrizioneRepository;
+import com.arenahub.repository.PartitaRepository;
+import com.arenahub.repository.TorneoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class TabelloneService {
     private final IscrizioneRepository iscrizioneRepository;
     private final PartitaRepository partitaRepository;
 
-    public TabelloneResponse genera(Integer idTorneo, TabelloneRequest richiesta) {
+    public TabelloneResponse genera(Long idTorneo, TabelloneRequest richiesta) {
         Torneo t = torneoRepository.findById(idTorneo)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato"));
         if (partitaRepository.existsByTorneoId(idTorneo)) {
@@ -63,9 +63,9 @@ public class TabelloneService {
         }
         int turni = Integer.numberOfTrailingZeros(size);
 
-        LocalDateTime base = (richiesta != null && richiesta.dataPartita() != null)
-                ? richiesta.dataPartita()
-                : t.getDataInizio();
+        // Il torneo nel DB non ha una data di inizio: se non arriva nella richiesta,
+        // la data delle partite resta vuota (la colonna data_partita e' facoltativa).
+        LocalDateTime base = richiesta == null ? null : richiesta.dataPartita();
 
         Map<Integer, List<Partita>> perTurno = new LinkedHashMap<>();
         for (int turno = 1; turno <= turni; turno++) {
@@ -75,9 +75,8 @@ public class TabelloneService {
                 Partita p = new Partita();
                 p.setTorneo(t);
                 p.setTurno(turno);
-                p.setPosizione(pos);
                 p.setStato(PartitaStato.programmata);
-                p.setDataPartita(base.plusMinutes(90L * (turno - 1)));
+                p.setDataPartita(base == null ? null : base.plusMinutes(90L * (turno - 1)));
                 lista.add(p);
             }
             perTurno.put(turno, lista);
@@ -106,9 +105,14 @@ public class TabelloneService {
             }
         }
 
-        List<Partita> tutte = new ArrayList<>();
-        perTurno.values().forEach(tutte::addAll);
-        partitaRepository.saveAll(tutte);
+        // Salvo un turno alla volta e in ordine: cosi' gli id rispettano la posizione
+        // nel tabellone (serve a registraRisultato per trovare la partita successiva).
+        for (List<Partita> lista : perTurno.values()) {
+            for (Partita p : lista) {
+                partitaRepository.save(p);
+            }
+        }
+        partitaRepository.flush();
 
         List<TabelloneResponse.PartitaCreata> create = primoTurno.stream()
                 .map(p -> new TabelloneResponse.PartitaCreata(
@@ -120,12 +124,12 @@ public class TabelloneService {
     }
 
     @Transactional(readOnly = true)
-    public PartiteResponse partite(Integer idTorneo) {
+    public PartiteResponse partite(Long idTorneo) {
         if (!torneoRepository.existsById(idTorneo)) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato");
         }
         Map<Integer, List<PartiteResponse.PartitaDto>> perTurno = new LinkedHashMap<>();
-        for (Partita p : partitaRepository.findByTorneoIdOrderByTurnoAscPosizioneAsc(idTorneo)) {
+        for (Partita p : partitaRepository.findByTorneoIdOrderByTurnoAscIdAsc(idTorneo)) {
             perTurno.computeIfAbsent(p.getTurno(), k -> new ArrayList<>()).add(new PartiteResponse.PartitaDto(
                     p.getId(),
                     p.getStato(),
@@ -142,11 +146,22 @@ public class TabelloneService {
         return new PartiteResponse(idTorneo, turni);
     }
 
+    /** Posizione della partita nel suo round (0, 1, 2...), ricavata dall'ordine degli id. */
+    private int posizione(Partita p) {
+        List<Partita> stessoTurno = partitaRepository.findByTorneoIdAndTurnoOrderByIdAsc(p.getTorneo().getId(), p.getTurno());
+        for (int i = 0; i < stessoTurno.size(); i++) {
+            if (stessoTurno.get(i).getId().equals(p.getId())) {
+                return i;
+            }
+        }
+        throw new IllegalStateException("Partita non trovata nel suo round");
+    }
+
     private PartiteResponse.Partecipante partecipante(Iscrizione i) {
         return i == null ? null : new PartiteResponse.Partecipante(i.getId(), i.nomePartecipante());
     }
 
-    public RisultatoResponse registraRisultato(Integer idPartita, RisultatoRequest r) {
+    public RisultatoResponse registraRisultato(Long idPartita, RisultatoRequest r) {
         Partita p = partitaRepository.findById(idPartita)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Partita non trovata"));
         Torneo t = p.getTorneo();
@@ -161,9 +176,12 @@ public class TabelloneService {
         }
 
         int ultimoTurno = partitaRepository.turnoMassimo(t.getId());
-        Optional<Partita> successiva = p.getTurno() < ultimoTurno
-                ? partitaRepository.findByTorneoIdAndTurnoAndPosizione(t.getId(), p.getTurno() + 1, p.getPosizione() / 2)
-                : Optional.empty();
+        int posizione = posizione(p);
+        Optional<Partita> successiva = Optional.empty();
+        if (p.getTurno() < ultimoTurno) {
+            List<Partita> turnoDopo = partitaRepository.findByTorneoIdAndTurnoOrderByIdAsc(t.getId(), p.getTurno() + 1);
+            successiva = Optional.of(turnoDopo.get(posizione / 2));
+        }
 
         if (p.getStato() == PartitaStato.conclusa
                 && successiva.isPresent() && successiva.get().getStato() == PartitaStato.conclusa) {
@@ -176,10 +194,10 @@ public class TabelloneService {
         p.setVincitore(vincitore);
         p.setStato(PartitaStato.conclusa);
 
-        Integer prossimaPartita = null;
+        Long prossimaPartita = null;
         if (successiva.isPresent()) {
             Partita prossima = successiva.get();
-            if (p.getPosizione() % 2 == 0) {
+            if (posizione % 2 == 0) {
                 prossima.setIscrizioneA(vincitore);
             } else {
                 prossima.setIscrizioneB(vincitore);

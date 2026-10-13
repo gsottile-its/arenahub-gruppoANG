@@ -1,4 +1,4 @@
 package com.arenahub.dto.response;
 
-public record SquadraBreve(Integer id, String nome) {
+public record SquadraBreve(Long id, String nome) {
 }

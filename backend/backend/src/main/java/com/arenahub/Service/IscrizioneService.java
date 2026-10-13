@@ -1,27 +1,27 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.request.IscrizioneRequest;
-import com.example.backend.dto.response.ConfermaResponse;
-import com.example.backend.dto.response.IscrizioneAdminResponse;
-import com.example.backend.dto.response.IscrizioneResponse;
-import com.example.backend.dto.response.IscrizioniPage;
-import com.example.backend.dto.response.RitiroResponse;
-import com.example.backend.dto.response.SquadraBreve;
-import com.example.backend.dto.response.UtenteBreve;
-import com.example.backend.entity.Iscrizione;
-import com.example.backend.entity.Squadra;
-import com.example.backend.entity.Torneo;
-import com.example.backend.entity.Utente;
-import com.example.backend.entity.enums.IscrizioneStato;
-import com.example.backend.entity.enums.RuoloSquadra;
-import com.example.backend.entity.enums.TorneoStato;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.IscrizioneRepository;
-import com.example.backend.repository.MembroSquadraRepository;
-import com.example.backend.repository.SquadraRepository;
-import com.example.backend.repository.TorneoRepository;
-import com.example.backend.repository.UtenteRepository;
-import com.example.backend.security.UtenteLoggato;
+import com.arenahub.dto.request.IscrizioneRequest;
+import com.arenahub.dto.response.ConfermaResponse;
+import com.arenahub.dto.response.IscrizioneAdminResponse;
+import com.arenahub.dto.response.IscrizioneResponse;
+import com.arenahub.dto.response.IscrizioniPage;
+import com.arenahub.dto.response.RitiroResponse;
+import com.arenahub.dto.response.SquadraBreve;
+import com.arenahub.dto.response.UtenteBreve;
+import com.arenahub.entity.Iscrizione;
+import com.arenahub.entity.Squadra;
+import com.arenahub.entity.Torneo;
+import com.arenahub.entity.Utente;
+import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.entity.enums.RuoloSquadra;
+import com.arenahub.entity.enums.TorneoStato;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.IscrizioneRepository;
+import com.arenahub.repository.MembroSquadraRepository;
+import com.arenahub.repository.SquadraRepository;
+import com.arenahub.repository.TorneoRepository;
+import com.arenahub.repository.UtenteRepository;
+import com.arenahub.security.UtenteLoggato;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,7 +49,7 @@ public class IscrizioneService {
     private final UtenteRepository utenteRepository;
     private final TorneoMapper mapper;
 
-    public IscrizioneResponse iscrivi(Integer idTorneo, IscrizioneRequest richiesta, UtenteLoggato utente) {
+    public IscrizioneResponse iscrivi(Long idTorneo, IscrizioneRequest richiesta, UtenteLoggato utente) {
 
         Torneo t = torneoRepository.trovaPerAggiornamento(idTorneo)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato"));
@@ -61,7 +61,7 @@ public class IscrizioneService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Le iscrizioni non sono aperte");
         }
 
-        Integer idSquadra = richiesta == null ? null : richiesta.idSquadra();
+        Long idSquadra = richiesta == null ? null : richiesta.idSquadra();
         Iscrizione i = new Iscrizione();
         i.setTorneo(t);
 
@@ -121,7 +121,7 @@ public class IscrizioneService {
     }
 
     @Transactional(readOnly = true)
-    public IscrizioniPage elenco(Integer idTorneo, String stato, int pagina) {
+    public IscrizioniPage elenco(Long idTorneo, String stato, int pagina) {
         if (!torneoRepository.existsById(idTorneo)) {
             throw new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato");
         }
@@ -153,7 +153,7 @@ public class IscrizioneService {
         return new IscrizioniPage(p, risultato.getTotalPages(), righe);
     }
 
-    public ConfermaResponse conferma(Integer idIscrizione, IscrizioneStato stato) {
+    public ConfermaResponse conferma(Long idIscrizione, IscrizioneStato stato) {
         if (stato != IscrizioneStato.confermata) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Dati non validi");
         }
@@ -166,7 +166,7 @@ public class IscrizioneService {
         return new ConfermaResponse(i.getId(), i.getTorneo().getId(), i.getStato());
     }
 
-    public RitiroResponse ritira(Integer idIscrizione, UtenteLoggato utente) {
+    public RitiroResponse ritira(Long idIscrizione, UtenteLoggato utente) {
         Iscrizione i = trova(idIscrizione);
         if (i.getStato() == IscrizioneStato.ritirata) {
             throw new ApiException(HttpStatus.CONFLICT, "Iscrizione già ritirata");
@@ -209,7 +209,7 @@ public class IscrizioneService {
                 .orElse(false);
     }
 
-    private Iscrizione trova(Integer id) {
+    private Iscrizione trova(Long id) {
         return iscrizioneRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Iscrizione non trovata"));
     }

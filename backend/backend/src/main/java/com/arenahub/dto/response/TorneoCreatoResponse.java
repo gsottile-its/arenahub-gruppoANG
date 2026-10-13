@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record TorneoCreatoResponse(
-        Integer id,
+        Long id,
         String nome,
         TorneoStato stato,
         TorneoDettaglioResponse.GiocoSintesi gioco,
@@ -16,7 +16,5 @@ public record TorneoCreatoResponse(
         String premio,
         LocalDateTime aperturaIscrizioni,
         LocalDateTime chiusuraIscrizioni,
-        LocalDateTime dataInizio,
-        LocalDateTime dataFine,
         String urlImmagine) {
 }

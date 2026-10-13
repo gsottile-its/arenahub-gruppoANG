@@ -1,17 +1,16 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.response.PiattaformaResponse;
-import com.example.backend.dto.response.SquadraBreve;
-import com.example.backend.dto.response.TorneoCardResponse;
-import com.example.backend.dto.response.TorneoCreatoResponse;
-import com.example.backend.dto.response.TorneoDettaglioResponse;
-import com.example.backend.dto.response.UtenteBreve;
-import com.example.backend.entity.Iscrizione;
-import com.example.backend.entity.Piattaforma;
-import com.example.backend.entity.Torneo;
-import com.example.backend.entity.enums.IscrizioneStato;
-import com.example.backend.repository.IscrizioneRepository;
-import com.example.backend.repository.PreferitoRepository;
+import com.arenahub.dto.response.PiattaformaResponse;
+import com.arenahub.dto.response.SquadraBreve;
+import com.arenahub.dto.response.TorneoCardResponse;
+import com.arenahub.dto.response.TorneoCreatoResponse;
+import com.arenahub.dto.response.TorneoDettaglioResponse;
+import com.arenahub.dto.response.UtenteBreve;
+import com.arenahub.entity.Iscrizione;
+import com.arenahub.entity.Piattaforma;
+import com.arenahub.entity.Torneo;
+import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.repository.IscrizioneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +25,6 @@ public class TorneoMapper {
             List.of(IscrizioneStato.in_attesa, IscrizioneStato.confermata);
 
     private final IscrizioneRepository iscrizioneRepository;
-    private final PreferitoRepository preferitoRepository;
 
     public long iscritti(Torneo t) {
         return iscrizioneRepository.countByTorneoIdAndStatoIn(t.getId(), STATI_CHE_OCCUPANO);
@@ -40,15 +38,13 @@ public class TorneoMapper {
                 i.getTorneo().getId(), IscrizioneStato.lista_attesa, i.getId());
     }
 
-    public TorneoCardResponse toCard(Torneo t, Integer idUtente) {
+    public TorneoCardResponse toCard(Torneo t, Long idUtente) {
         IscrizioneStato mioStato = null;
-        Boolean salvato = null;
         if (idUtente != null) {
             mioStato = iscrizioneRepository.trovaAttiveDiUtente(t.getId(), idUtente).stream()
                     .findFirst()
                     .map(Iscrizione::getStato)
                     .orElse(null);
-            salvato = preferitoRepository.existsByUtenteIdAndTorneoId(idUtente, t.getId());
         }
         return new TorneoCardResponse(
                 t.getId(),
@@ -57,17 +53,15 @@ public class TorneoMapper {
                 t.getGioco().getNome(),
                 t.getPiattaforme().stream().map(Piattaforma::getNome).sorted().toList(),
                 t.getGiocatoriPerSquadra(),
-                t.getDataInizio(),
+                t.getChiusuraIscrizioni(),
                 t.getPostiMax(),
                 iscritti(t),
                 t.getStato(),
-                mioStato,
-                salvato);
+                mioStato);
     }
 
-    public TorneoDettaglioResponse toDettaglio(Torneo t, Integer idUtente) {
+    public TorneoDettaglioResponse toDettaglio(Torneo t, Long idUtente) {
         TorneoDettaglioResponse.MiaIscrizione mia = null;
-        Boolean salvato = null;
         if (idUtente != null) {
             mia = iscrizioneRepository.trovaAttiveDiUtente(t.getId(), idUtente).stream()
                     .findFirst()
@@ -78,13 +72,11 @@ public class TorneoMapper {
                                     : new SquadraBreve(i.getSquadra().getId(), i.getSquadra().getNome()),
                             posizioneAttesa(i)))
                     .orElse(null);
-            salvato = preferitoRepository.existsByUtenteIdAndTorneoId(idUtente, t.getId());
         }
         return new TorneoDettaglioResponse(
                 t.getId(),
                 t.getNome(),
                 t.getDescrizione(),
-                t.getRegolamento(),
                 t.getUrlImage(),
                 gioco(t),
                 piattaforme(t),
@@ -94,12 +86,9 @@ public class TorneoMapper {
                 t.getPremio(),
                 t.getAperturaIscrizioni(),
                 t.getChiusuraIscrizioni(),
-                t.getDataInizio(),
-                t.getDataFine(),
                 t.getStato(),
                 new UtenteBreve(t.getOrganizzatore().getId(), t.getOrganizzatore().getNickname()),
-                mia,
-                salvato);
+                mia);
     }
 
     public TorneoCreatoResponse toCreato(Torneo t) {
@@ -114,8 +103,6 @@ public class TorneoMapper {
                 t.getPremio(),
                 t.getAperturaIscrizioni(),
                 t.getChiusuraIscrizioni(),
-                t.getDataInizio(),
-                t.getDataFine(),
                 t.getUrlImage());
     }
 

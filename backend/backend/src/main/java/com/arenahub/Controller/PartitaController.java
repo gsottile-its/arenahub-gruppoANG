@@ -1,15 +1,16 @@
 package com.arenahub.Controller;
 
+import com.arenahub.security.Pubblico;
 import com.arenahub.dto.request.RisultatoRequest;
 import com.arenahub.dto.request.TabelloneRequest;
 import com.arenahub.dto.response.PartiteResponse;
 import com.arenahub.dto.response.RisultatoResponse;
 import com.arenahub.dto.response.TabelloneResponse;
-import com.arenahub.service.TabelloneService;
+import com.arenahub.Service.TabelloneService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.arenahub.security.SoloAdmin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,20 +29,21 @@ public class PartitaController {
 
     @PostMapping("/tornei/{id}/tabellone")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN')")
-    public TabelloneResponse generaTabellone(@PathVariable Integer id,
+    @SoloAdmin
+    public TabelloneResponse generaTabellone(@PathVariable Long id,
                                              @RequestBody(required = false) TabelloneRequest richiesta) {
         return tabelloneService.genera(id, richiesta);
     }
 
+    @Pubblico
     @GetMapping("/tornei/{id}/partite")
-    public PartiteResponse partite(@PathVariable Integer id) {
+    public PartiteResponse partite(@PathVariable Long id) {
         return tabelloneService.partite(id);
     }
 
     @PatchMapping("/partite/{id}/risultato")
-    @PreAuthorize("hasRole('ADMIN')")
-    public RisultatoResponse registraRisultato(@PathVariable Integer id,
+    @SoloAdmin
+    public RisultatoResponse registraRisultato(@PathVariable Long id,
                                                @Valid @RequestBody RisultatoRequest richiesta) {
         return tabelloneService.registraRisultato(id, richiesta);
     }

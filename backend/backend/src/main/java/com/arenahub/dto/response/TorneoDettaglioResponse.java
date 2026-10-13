@@ -7,10 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record TorneoDettaglioResponse(
-        Integer id,
+        Long id,
         String nome,
         String descrizione,
-        String regolamento,
         String urlImmagine,
         GiocoSintesi gioco,
         List<PiattaformaResponse> piattaforme,
@@ -20,16 +19,13 @@ public record TorneoDettaglioResponse(
         String premio,
         LocalDateTime aperturaIscrizioni,
         LocalDateTime chiusuraIscrizioni,
-        LocalDateTime dataInizio,
-        LocalDateTime dataFine,
         TorneoStato stato,
         UtenteBreve organizzatore,
-        MiaIscrizione miaIscrizione,
-        Boolean salvato) {
+        MiaIscrizione miaIscrizione) {
 
-    public record GiocoSintesi(Integer id, String nome, String tipologia) {
+    public record GiocoSintesi(Long id, String nome, String tipologia) {
     }
 
-    public record MiaIscrizione(Integer id, IscrizioneStato stato, SquadraBreve squadra, Integer posizioneAttesa) {
+    public record MiaIscrizione(Long id, IscrizioneStato stato, SquadraBreve squadra, Integer posizioneAttesa) {
     }
 }

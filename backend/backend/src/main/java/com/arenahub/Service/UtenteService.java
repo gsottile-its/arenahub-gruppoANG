@@ -1,13 +1,13 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.request.UtenteUpdateRequest;
-import com.example.backend.dto.response.UtenteResponse;
-import com.example.backend.entity.Utente;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.UtenteRepository;
+import com.arenahub.dto.request.UtenteUpdateRequest;
+import com.arenahub.dto.response.UtenteResponse;
+import com.arenahub.entity.Utente;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.UtenteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import com.example.backend.security.PasswordService;
+import com.arenahub.security.PasswordService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class UtenteService {
     private final UtenteRepository utenteRepository;
     private final PasswordService passwordEncoder;
 
-    public UtenteResponse aggiorna(Integer idUtente, UtenteUpdateRequest r) {
+    public UtenteResponse aggiorna(Long idUtente, UtenteUpdateRequest r) {
         Utente u = utenteRepository.findById(idUtente)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Autenticazione richiesta"));
 

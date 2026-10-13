@@ -9,15 +9,12 @@ import java.util.List;
 /** Stessi campi di TorneoRequest, tutti facoltativi: null significa "non cambiare". */
 public record TorneoUpdateRequest(
         @Size(min = 1, max = 100) String nome,
-        Integer idGioco,
-        @Size(min = 1) List<Integer> idPiattaforme,
+        Long idGioco,
+        @Size(min = 1) List<Long> idPiattaforme,
         @Size(max = 50) String premio,
-        LocalDateTime dataInizio,
-        LocalDateTime dataFine,
         LocalDateTime aperturaIscrizioni,
         LocalDateTime chiusuraIscrizioni,
         @Min(1) Integer giocatoriPerSquadra,
         @Min(2) Integer postiMax,
-        String descrizione,
-        String regolamento) {
+        String descrizione) {
 }

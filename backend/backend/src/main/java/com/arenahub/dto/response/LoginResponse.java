@@ -4,6 +4,6 @@ import com.arenahub.entity.enums.RuoloUtente;
 
 public record LoginResponse(String token, UtenteSintesi utente) {
 
-    public record UtenteSintesi(Integer id, String nickname, RuoloUtente ruolo) {
+    public record UtenteSintesi(Long id, String nickname, RuoloUtente ruolo) {
     }
 }

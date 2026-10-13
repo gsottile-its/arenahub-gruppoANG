@@ -1,4 +1,4 @@
 package com.arenahub.dto.response;
 
-public record TipologiaResponse(Integer id, String nome) {
+public record TipologiaResponse(Long id, String nome) {
 }

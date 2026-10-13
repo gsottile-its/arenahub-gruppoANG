@@ -4,7 +4,7 @@ import com.arenahub.entity.Utente;
 import com.arenahub.entity.enums.RuoloUtente;
 
 public record UtenteResponse(
-        Integer id,
+        Long id,
         String nickname,
         String nome,
         String cognome,

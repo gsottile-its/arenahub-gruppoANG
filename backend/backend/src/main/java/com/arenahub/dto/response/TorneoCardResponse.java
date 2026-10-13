@@ -6,18 +6,17 @@ import com.arenahub.entity.enums.TorneoStato;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/** mioStato e salvato sono null quando la richiesta non ha un token valido. */
+/** mioStato e' null quando la richiesta non ha un token valido. */
 public record TorneoCardResponse(
-        Integer id,
+        Long id,
         String nome,
         String urlImmagine,
         String gioco,
         List<String> piattaforme,
         Integer giocatoriPerSquadra,
-        LocalDateTime dataInizio,
+        LocalDateTime chiusuraIscrizioni,
         Integer postiMax,
         long iscritti,
         TorneoStato stato,
-        IscrizioneStato mioStato,
-        Boolean salvato) {
+        IscrizioneStato mioStato) {
 }

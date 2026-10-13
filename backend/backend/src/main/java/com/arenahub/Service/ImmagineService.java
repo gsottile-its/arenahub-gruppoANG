@@ -1,9 +1,9 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.response.ImmagineResponse;
-import com.example.backend.entity.Torneo;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.TorneoRepository;
+import com.arenahub.dto.response.ImmagineResponse;
+import com.arenahub.entity.Torneo;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.TorneoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class ImmagineService {
         this.baseUrl = baseUrl;
     }
 
-    public ImmagineResponse carica(Integer idTorneo, MultipartFile file) {
+    public ImmagineResponse carica(Long idTorneo, MultipartFile file) {
         Torneo t = torneoRepository.findById(idTorneo)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato"));
 

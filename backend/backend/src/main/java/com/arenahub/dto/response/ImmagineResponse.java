@@ -1,4 +1,4 @@
 package com.arenahub.dto.response;
 
-public record ImmagineResponse(Integer id, String urlImmagine) {
+public record ImmagineResponse(Long id, String urlImmagine) {
 }

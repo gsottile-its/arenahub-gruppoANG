@@ -6,11 +6,10 @@ import com.arenahub.dto.response.MembroResponse;
 import com.arenahub.dto.response.SquadraMiaResponse;
 import com.arenahub.dto.response.SquadraResponse;
 import com.arenahub.security.UtenteLoggato;
-import com.arenahub.service.SquadraService;
+import com.arenahub.Service.SquadraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,30 +29,30 @@ public class SquadraController {
     private final SquadraService squadraService;
 
     @GetMapping("/mie")
-    public List<SquadraMiaResponse> mie(@AuthenticationPrincipal UtenteLoggato utente) {
+    public List<SquadraMiaResponse> mie(UtenteLoggato utente) {
         return squadraService.mie(utente.id());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SquadraResponse crea(@Valid @RequestBody SquadraRequest richiesta,
-                                @AuthenticationPrincipal UtenteLoggato utente) {
+                                UtenteLoggato utente) {
         return squadraService.crea(richiesta, utente.id());
     }
 
     @PostMapping("/{id}/membri")
     @ResponseStatus(HttpStatus.CREATED)
-    public MembroResponse aggiungiMembro(@PathVariable Integer id,
+    public MembroResponse aggiungiMembro(@PathVariable Long id,
                                          @Valid @RequestBody MembroRequest richiesta,
-                                         @AuthenticationPrincipal UtenteLoggato utente) {
+                                         UtenteLoggato utente) {
         return squadraService.aggiungiMembro(id, richiesta, utente.id());
     }
 
     @DeleteMapping("/{id}/membri/{idUtente}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void rimuoviMembro(@PathVariable Integer id,
-                              @PathVariable Integer idUtente,
-                              @AuthenticationPrincipal UtenteLoggato utente) {
+    public void rimuoviMembro(@PathVariable Long id,
+                              @PathVariable Long idUtente,
+                              UtenteLoggato utente) {
         squadraService.rimuoviMembro(id, idUtente, utente.id());
     }
 }

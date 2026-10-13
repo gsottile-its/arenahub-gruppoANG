@@ -1,12 +1,12 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.response.GiocoResponse;
-import com.example.backend.dto.response.PiattaformaResponse;
-import com.example.backend.dto.response.TipologiaResponse;
-import com.example.backend.entity.Gioco;
-import com.example.backend.repository.GiocoRepository;
-import com.example.backend.repository.PiattaformaRepository;
-import com.example.backend.repository.TipologiaGiocoRepository;
+import com.arenahub.dto.response.GiocoResponse;
+import com.arenahub.dto.response.PiattaformaResponse;
+import com.arenahub.dto.response.TipologiaResponse;
+import com.arenahub.entity.Gioco;
+import com.arenahub.repository.GiocoRepository;
+import com.arenahub.repository.PiattaformaRepository;
+import com.arenahub.repository.TipologiaGiocoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class CatalogoService {
                 .toList();
     }
 
-    public List<GiocoResponse> giochi(Integer idTipologia) {
+    public List<GiocoResponse> giochi(Long idTipologia) {
         List<Gioco> giochi = idTipologia == null
                 ? giocoRepository.findAll(Sort.by("id"))
                 : giocoRepository.findByTipologiaId(idTipologia);

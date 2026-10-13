@@ -3,10 +3,9 @@ package com.arenahub.Controller;
 import com.arenahub.dto.request.UtenteUpdateRequest;
 import com.arenahub.dto.response.UtenteResponse;
 import com.arenahub.security.UtenteLoggato;
-import com.arenahub.service.UtenteService;
+import com.arenahub.Service.UtenteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,7 @@ public class UtenteController {
 
     @PutMapping("/me")
     public UtenteResponse aggiorna(@Valid @RequestBody UtenteUpdateRequest richiesta,
-                                   @AuthenticationPrincipal UtenteLoggato utente) {
+                                   UtenteLoggato utente) {
         return utenteService.aggiorna(utente.id(), richiesta);
     }
 }

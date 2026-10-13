@@ -1,19 +1,21 @@
 package com.arenahub.Service;
 
-import com.example.backend.dto.request.MembroRequest;
-import com.example.backend.dto.request.SquadraRequest;
-import com.example.backend.dto.response.MembroResponse;
-import com.example.backend.dto.response.SquadraMiaResponse;
-import com.example.backend.dto.response.SquadraResponse;
-import com.example.backend.entity.MembroSquadra;
-import com.example.backend.entity.MembroSquadraId;
-import com.example.backend.entity.Squadra;
-import com.example.backend.entity.Utente;
-import com.example.backend.entity.enums.RuoloSquadra;
-import com.example.backend.exception.ApiException;
-import com.example.backend.repository.MembroSquadraRepository;
-import com.example.backend.repository.SquadraRepository;
-import com.example.backend.repository.UtenteRepository;
+import com.arenahub.dto.request.MembroRequest;
+import com.arenahub.dto.request.SquadraRequest;
+import com.arenahub.dto.response.MembroResponse;
+import com.arenahub.dto.response.SquadraMiaResponse;
+import com.arenahub.dto.response.SquadraResponse;
+import com.arenahub.entity.MembroSquadra;
+import com.arenahub.entity.MembroSquadraId;
+import com.arenahub.entity.Squadra;
+import com.arenahub.entity.Utente;
+import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.entity.enums.RuoloSquadra;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.IscrizioneRepository;
+import com.arenahub.repository.MembroSquadraRepository;
+import com.arenahub.repository.SquadraRepository;
+import com.arenahub.repository.UtenteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -33,9 +35,10 @@ public class SquadraService {
     private final SquadraRepository squadraRepository;
     private final MembroSquadraRepository membroRepository;
     private final UtenteRepository utenteRepository;
+    private final IscrizioneRepository iscrizioneRepository;
 
     @Transactional(readOnly = true)
-    public List<SquadraMiaResponse> mie(Integer idUtente) {
+    public List<SquadraMiaResponse> mie(Long idUtente) {
         return membroRepository.findByUtenteId(idUtente).stream()
                 .map(m -> new SquadraMiaResponse(
                         m.getSquadra().getId(),
@@ -45,11 +48,11 @@ public class SquadraService {
                 .toList();
     }
 
-    public SquadraResponse crea(SquadraRequest r, Integer idUtente) {
+    public SquadraResponse crea(SquadraRequest r, Long idUtente) {
         if (squadraRepository.existsByNome(r.nome())) {
             throw new ApiException(HttpStatus.CONFLICT, "Nome squadra già in uso");
         }
-        if (squadraRepository.countByCreatoreId(idUtente) >= MAX_SQUADRE_CREATE) {
+        if (membroRepository.countByUtenteIdAndRuoloSquadra(idUtente, RuoloSquadra.capo_squadra) >= MAX_SQUADRE_CREATE) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Hai raggiunto il limite di 10 squadre");
         }
         Utente creatore = utenteRepository.findById(idUtente)
@@ -57,7 +60,6 @@ public class SquadraService {
 
         Squadra s = new Squadra();
         s.setNome(r.nome());
-        s.setCreatore(creatore);
         s = squadraRepository.save(s);
 
         membroRepository.save(nuovoMembro(s, creatore, RuoloSquadra.capo_squadra));
@@ -65,7 +67,7 @@ public class SquadraService {
                 List.of(new SquadraResponse.Membro(creatore.getId(), creatore.getNickname(), RuoloSquadra.capo_squadra)));
     }
 
-    public MembroResponse aggiungiMembro(Integer idSquadra, MembroRequest r, Integer idRichiedente) {
+    public MembroResponse aggiungiMembro(Long idSquadra, MembroRequest r, Long idRichiedente) {
         Squadra s = squadraRepository.findById(idSquadra)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Squadra non trovata"));
         boolean capo = membroRepository.findBySquadraIdAndUtenteId(idSquadra, idRichiedente)
@@ -94,7 +96,7 @@ public class SquadraService {
         return new MembroResponse(s.getId(), nuovo.getId(), nuovo.getNickname(), ruolo);
     }
 
-    public void rimuoviMembro(Integer idSquadra, Integer idUtente, Integer idRichiedente) {
+    public void rimuoviMembro(Long idSquadra, Long idUtente, Long idRichiedente) {
         MembroSquadra target = membroRepository.findBySquadraIdAndUtenteId(idSquadra, idUtente)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Membro non trovato"));
 
@@ -111,6 +113,11 @@ public class SquadraService {
                         "Il capo squadra non può uscire finché ci sono altri membri");
             }
 
+            // Nel DB iscrizione.fk_squadra ha "on delete cascade": se cancellassimo la squadra
+            // sparirebbero anche le sue iscrizioni, quindi lo blocchiamo prima.
+            if (iscrizioneRepository.existsBySquadraIdAndStatoNot(idSquadra, IscrizioneStato.ritirata)) {
+                throw new ApiException(HttpStatus.CONFLICT, "La squadra è iscritta a dei tornei");
+            }
             try {
                 membroRepository.delete(target);
                 membroRepository.flush();

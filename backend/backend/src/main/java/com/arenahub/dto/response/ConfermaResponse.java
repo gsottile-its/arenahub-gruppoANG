@@ -2,5 +2,5 @@ package com.arenahub.dto.response;
 
 import com.arenahub.entity.enums.IscrizioneStato;
 
-public record ConfermaResponse(Integer id, Integer idTorneo, IscrizioneStato stato) {
+public record ConfermaResponse(Long id, Long idTorneo, IscrizioneStato stato) {
 }
