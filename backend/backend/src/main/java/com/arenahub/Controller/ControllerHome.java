@@ -1,6 +1,6 @@
-package com.example.backend.Controller;
+package com.arenahub.Controller;
 
-import com.example.backend.Service.ServiceHome;
+import com.arenahub.Service.ServiceHome;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,4 +1,4 @@
-package com.example.backend.Service;
+package com.arenahub.Service;
 
 import org.springframework.stereotype.Service;
 
