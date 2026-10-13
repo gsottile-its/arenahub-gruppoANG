@@ -1,0 +1,59 @@
+package com.arenahub.Service;
+
+import com.arenahub.dto.request.LoginRequest;
+import com.arenahub.dto.request.RegistrazioneRequest;
+import com.arenahub.dto.response.LoginResponse;
+import com.arenahub.dto.response.UtenteResponse;
+import com.arenahub.entity.Utente;
+import com.arenahub.entity.enums.RuoloUtente;
+import com.arenahub.exception.ApiException;
+import com.arenahub.repository.UtenteRepository;
+import com.arenahub.security.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import com.arenahub.security.PasswordService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final UtenteRepository utenteRepository;
+    private final PasswordService passwordEncoder;
+    private final JwtService jwtService;
+
+    public UtenteResponse registra(RegistrazioneRequest r) {
+        if (utenteRepository.existsByEmail(r.email())) {
+            throw new ApiException(HttpStatus.CONFLICT, "Email già registrata", "email");
+        }
+        if (utenteRepository.existsByNickname(r.nickname())) {
+            throw new ApiException(HttpStatus.CONFLICT, "Nickname già in uso", "nickname");
+        }
+        Utente u = new Utente();
+        u.setEmail(r.email());
+        u.setNickname(r.nickname());
+        u.setNome(r.nome());
+        u.setCognome(r.cognome());
+        u.setPasswordHash(passwordEncoder.encode(r.password()));
+        u.setRuolo(RuoloUtente.utente);
+        return UtenteResponse.da(utenteRepository.save(u));
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest r) {
+        Utente u = utenteRepository.findByEmail(r.email())
+                .filter(x -> passwordEncoder.matches(r.password(), x.getPasswordHash()))
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Email o password non corretti"));
+        return new LoginResponse(jwtService.creaToken(u),
+                new LoginResponse.UtenteSintesi(u.getId(), u.getNickname(), u.getRuolo()));
+    }
+
+    @Transactional(readOnly = true)
+    public UtenteResponse me(Long idUtente) {
+        Utente u = utenteRepository.findById(idUtente)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Autenticazione richiesta"));
+        return UtenteResponse.da(u);
+    }
+}
