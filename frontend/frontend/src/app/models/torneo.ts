@@ -68,3 +68,70 @@ export interface RispostaDisiscrizione {
   stato: 'ritirata';
   promossa: { id: number; nome: string; stato: StatoIscrizione } | null;
 }
+
+// ---- area admin ----
+
+// corpo di post /api/tornei; in put /api/tornei/{id} si mandano solo i campi cambiati
+export interface DatiTorneo {
+  nome: string;
+  idGioco: number;
+  idPiattaforme: number[];
+  premio: string | null;
+  aperturaIscrizioni: string;
+  chiusuraIscrizioni: string;
+  giocatoriPerSquadra: number;
+  postiMax: number;
+  descrizione: string | null;
+}
+
+export interface TorneoCreato {
+  id: number;
+  nome: string;
+  stato: StatoTorneo;
+  gioco: { id: number; nome: string; tipologia: string };
+  piattaforme: { id: number; nome: string }[];
+  giocatoriPerSquadra: number;
+  postiMax: number;
+  premio: string | null;
+  aperturaIscrizioni: string;
+  chiusuraIscrizioni: string;
+  urlImmagine: string | null;
+}
+
+export interface RispostaStato {
+  id: number;
+  stato: StatoTorneo;
+}
+
+export interface RispostaImmagine {
+  id: number;
+  urlImmagine: string;
+}
+
+export interface IscrizioneAdmin {
+  id: number;
+  nome: string;
+  tipo: 'squadra' | 'utente';
+  dataIscrizione: string;
+  stato: StatoIscrizione;
+  posizioneAttesa: number | null;
+}
+
+export interface PaginaIscrizioni {
+  pagina: number;
+  pagineTotali: number;
+  iscrizioni: IscrizioneAdmin[];
+}
+
+export interface RispostaConferma {
+  id: number;
+  idTorneo: number;
+  stato: StatoIscrizione;
+}
+
+export interface RispostaTabellone {
+  idTorneo: number;
+  round: number;
+  partiteCreate: number;
+  partite: { id: number; iscrizioneA: number; iscrizioneB: number | null }[];
+}

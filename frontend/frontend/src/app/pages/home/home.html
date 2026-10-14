@@ -6,16 +6,18 @@
   <div class="hero-velo"></div>
 
   <div class="hero-contenuto">
-    <h1>Crea il tuo team<br />e vinci il torneo!</h1>
+    <h1>Crea il tuo team<br />e vinci il <span class="verde">torneo</span>!</h1>
     <p class="sottotitolo">
       Trova i tornei dei tuoi giochi preferiti, iscriviti da solo o con la tua squadra
       e scala il tabellone fino alla vittoria.
     </p>
 
     <div class="azioni">
-      <a routerLink="/tornei" class="btn btn-verde">Scopri i tornei</a>
+      <a routerLink="/tornei" class="btn btn-verde angoli">Scopri i tornei</a>
 
-      @if (auth.loggato()) {
+      @if (auth.admin()) {
+        <a routerLink="/admin" class="btn">Pannello admin</a>
+      } @else if (auth.loggato()) {
         <a routerLink="/miei-tornei" class="btn">I miei tornei</a>
       } @else {
         <a routerLink="/registrazione" class="btn">Crea account</a>
@@ -38,6 +40,7 @@
   @for (b of blocchi; track b.titolo; let dispari = $odd) {
     <section class="blocco" [class.inverso]="dispari">
       <div class="media">
+        <img class="foto" [src]="b.immagine" alt="" loading="lazy" />
         <span class="parola">{{ b.parola }}</span>
         <span class="numero">0{{ $index + 1 }}</span>
       </div>
@@ -49,22 +52,65 @@
         </div>
         <div class="barra"></div>
         <p>{{ b.testo }}</p>
-        <a [routerLink]="b.link" class="btn-freccia">{{ b.azione }}</a>
+        <!-- l'admin non ha tornei suoi -->
+        @if (!(auth.admin() && b.link === '/miei-tornei')) {
+          <a [routerLink]="b.link" class="btn-freccia">{{ b.azione }}</a>
+        }
       </div>
     </section>
   }
 </div>
 
-<aside class="banner-its">
-  <a class="banner-logo" href="https://www.laziodigital.it/" target="_blank" rel="noopener">
-    <img src="img/its/logo.png" alt="Lazio Digital ITS Academy" />
-  </a>
-  <div class="banner-testo">
-    <span class="banner-etichetta">Project Work</span>
-    <h2>Nato in aula, pensato per giocare</h2>
-    <p>ArenaHub è il progetto realizzato dagli studenti di Lazio Digital ITS Academy.</p>
-    <a class="banner-link" href="https://www.laziodigital.it/" target="_blank" rel="noopener">Scopri l'academy →</a>
+<aside class="banner-its" [class.aperto]="chiSiamoAperto()">
+  <div class="banner-riga">
+    <a class="banner-logo" href="https://www.laziodigital.it/" target="_blank" rel="noopener">
+      <img src="img/its/logo.png" alt="Lazio Digital ITS Academy" />
+    </a>
+    <div class="banner-testo">
+      <span class="banner-etichetta">Project Work</span>
+      <h2>Nato in aula, pensato per giocare</h2>
+      <p>ArenaHub è il progetto realizzato dagli studenti di Lazio Digital ITS Academy.</p>
+      <button class="banner-link" (click)="chiSiamoAperto.set(!chiSiamoAperto())" [attr.aria-expanded]="chiSiamoAperto()">
+        {{ chiSiamoAperto() ? 'Chiudi' : 'Chi siamo' }} <span class="freccia">↓</span>
+      </button>
+    </div>
   </div>
+
+  <!-- chi siamo: si apre verso il basso dentro il banner -->
+  <div class="banner-espanso">
+    <div class="banner-espanso-dentro">
+      <div class="colonne">
+        <div>
+          <span class="banner-etichetta">Il progetto</span>
+          <h3>Chi siamo</h3>
+          <p>
+            Siamo il gruppo ANG e ArenaHub è il nostro Project Work: una piattaforma per organizzare tornei di
+            videogiochi, dalla creazione del torneo all'iscrizione dei giocatori, fino al tabellone.
+          </p>
+          <p>
+            L'abbiamo progettata e sviluppata in una settimana lavorando come un vero team, con un contratto API
+            condiviso tra le varie parti.
+          </p>
+          <ul class="ruoli">
+            <li>Frontend</li>
+            <li>Backend</li>
+            <li>Database</li>
+            <li>Project manager</li>
+          </ul>
+        </div>
+        <div>
+          <span class="banner-etichetta">L'academy</span>
+          <h3>Lazio Digital ITS Academy</h3>
+          <p>
+            Forma tecnici specializzati nel digitale con percorsi post-diploma biennali, che alternano lezioni
+            con docenti dal mondo del lavoro e stage in azienda.
+          </p>
+          <a class="banner-sito" href="https://www.laziodigital.it/" target="_blank" rel="noopener">Visita il sito dell'academy →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <img class="banner-simbolo" src="img/its/simbolo.png" alt="" aria-hidden="true" />
 </aside>
 </div>

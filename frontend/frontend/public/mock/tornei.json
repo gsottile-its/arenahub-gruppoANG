@@ -104,6 +104,38 @@
       "mioStato": null
     },
     {
+      "id": 15,
+      "nome": "Overwatch Rising",
+      "urlImmagine": "img/giochi/overwatch-2.webp",
+      "gioco": "Overwatch 2",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 5,
+      "postiMax": 12,
+      "iscritti": 4,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
+      "id": 16,
+      "nome": "Apex Trio Royale",
+      "urlImmagine": "img/giochi/apex-legends.webp",
+      "gioco": "Apex Legends",
+      "piattaforme": [
+        "PC",
+        "PS5",
+        "Xbox"
+      ],
+      "giocatoriPerSquadra": 3,
+      "postiMax": 20,
+      "iscritti": 9,
+      "stato": "iscrizioni_aperte",
+      "mioStato": null
+    },
+    {
       "id": 13,
       "nome": "Apex Duo Challenge",
       "urlImmagine": "img/giochi/apex-legends.webp",

@@ -4,19 +4,24 @@
   <nav class="menu">
     <a routerLink="/" routerLinkActive="attivo" [routerLinkActiveOptions]="{ exact: true }">Home</a>
     <a routerLink="/tornei" routerLinkActive="attivo">Tornei</a>
-    @if (auth.loggato()) {
+    @if (auth.loggato() && !auth.admin()) {
       <a routerLink="/miei-tornei" routerLinkActive="attivo">Miei tornei</a>
+    }
+    @if (auth.admin()) {
+      <a routerLink="/admin" routerLinkActive="attivo" class="voce-admin">Admin</a>
     }
   </nav>
 
   <div class="destra">
     <!-- notifiche e lingua: per ora solo grafica -->
-    <button class="icona" title="Notifiche">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z" />
-        <path d="M10 20a2 2 0 0 0 4 0" />
-      </svg>
-    </button>
+    @if (auth.loggato() && !auth.admin()) {
+      <button class="icona" title="Notifiche">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z" />
+          <path d="M10 20a2 2 0 0 0 4 0" />
+        </svg>
+      </button>
+    }
     <button class="icona" title="Cambia lingua">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="9" />
@@ -29,6 +34,9 @@
         <button class="pulsante-header" (click)="apriChiudiMenu()">Ciao {{ utente.nickname }} <span class="icona-pulsante">👤</span></button>
         @if (menuAperto()) {
           <div class="tendina">
+            @if (auth.admin()) {
+              <a routerLink="/admin" (click)="menuAperto.set(false)">Area admin</a>
+            }
             <a routerLink="/profilo" (click)="menuAperto.set(false)">Modifica profilo</a>
             <button (click)="logout()">Logout</button>
           </div>

@@ -41,6 +41,15 @@ h1 {
   line-height: 1.05;
 }
 
+/* "torneo" verde con le righe sottili dentro le lettere */
+h1 .verde {
+  color: transparent;
+  background-color: var(--accento);
+  background-image: var(--texture-scura);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 .sottotitolo {
   color: var(--testo-tenue);
   font-size: 1.1rem;
@@ -57,6 +66,9 @@ h1 {
 }
 
 .azioni .btn { background-image: none; }
+
+/* angoli tagliati come il banner its */
+.azioni .angoli { clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
 
 .presentazione {
   display: flex;
@@ -83,6 +95,26 @@ h1 {
     linear-gradient(135deg, #2f3d1f, #121212);
   clip-path: polygon(0 0, 100% 0, 84% 100%, 0 100%);
 }
+
+.foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* scurisce la foto per far leggere parola e numero */
+.media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    var(--texture-chiara),
+    linear-gradient(0deg, rgba(10, 12, 10, 0.85), rgba(10, 12, 10, 0.2) 65%);
+}
+
+.parola, .numero { z-index: 1; }
 
 .parola {
   position: absolute;
@@ -152,7 +184,7 @@ h1 {
   overflow: hidden;
   margin: 0 calc(50% - 50vw) -40px;
   padding: 0 max(16px, calc(50vw - 600px)) 60px;
-  background: linear-gradient(to bottom, #111 0, #181a18 220px, #181a18 100%);
+  background: linear-gradient(to bottom, #111 0, #171917 220px, #171917 100%);
 }
 
 .motivi {
@@ -175,9 +207,6 @@ h1 {
 .banner-its {
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  gap: 40px;
   margin-top: 90px;
   padding: 44px 56px;
   color: #111;
@@ -186,6 +215,14 @@ h1 {
   border-top: 3px solid var(--accento);
   transition: background-color 0.25s;
   clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px));
+}
+
+.banner-riga {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 40px;
 }
 
 .banner-logo {
@@ -227,6 +264,10 @@ h1 {
 .banner-link {
   display: inline-block;
   margin-top: 14px;
+  border: none;
+  padding: 0 0 3px;
+  font-size: 1rem;
+  cursor: pointer;
   font-family: var(--font-titoli);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -239,6 +280,58 @@ h1 {
 
 /* la barra verde si carica da sinistra a destra */
 .banner-link:hover { background-size: 100% 3px; }
+
+.freccia { display: inline-block; transition: transform 0.3s ease; }
+.aperto .freccia { transform: rotate(180deg); }
+
+/* parte che si apre: passa da altezza 0 all'altezza del contenuto */
+.banner-espanso {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s ease;
+}
+
+.aperto .banner-espanso { grid-template-rows: 1fr; }
+.banner-espanso-dentro { overflow: hidden; min-height: 0; }
+
+.colonne {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 34px;
+  padding-top: 30px;
+  border-top: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.colonne h3 { margin: 6px 0 12px; font-size: 1.5rem; }
+.colonne p { margin: 0 0 12px; color: #444; line-height: 1.65; }
+
+.ruoli { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+
+.ruoli li {
+  padding: 5px 14px;
+  background: #111;
+  color: var(--accento);
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.banner-sito {
+  display: inline-block;
+  margin-top: 6px;
+  color: #111;
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s;
+}
+
+.banner-sito:hover { border-color: #111; }
 
 .banner-its:hover .banner-simbolo { opacity: 0.14; }
 
@@ -254,6 +347,8 @@ h1 {
 }
 
 @media (max-width: 860px) {
-  .banner-its { flex-direction: column; align-items: flex-start; gap: 24px; padding: 32px 24px; }
+  .banner-its { padding: 32px 24px; }
+  .banner-riga { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .colonne { grid-template-columns: 1fr; gap: 24px; }
   .banner-logo { max-width: 100%; width: 240px; padding: 0 0 24px; border-right: none; border-bottom: 2px solid rgba(0, 0, 0, 0.12); }
 }

@@ -1,0 +1,132 @@
+<a [routerLink]="modifica ? ['/admin/tornei', idTorneo] : ['/admin/tornei']" class="indietro">← Torna indietro</a>
+
+@if (caricamento()) {
+  <p class="messaggio">Caricamento…</p>
+} @else if (erroreCaricamento()) {
+  <p class="messaggio errore">{{ erroreCaricamento() }}</p>
+} @else if (nonModificabile()) {
+  <div class="modulo">
+    <h1>Modifica torneo</h1>
+    <p class="nota">Il torneo è «{{ testiStato[originale()!.stato] }}»: non si può più modificare.</p>
+  </div>
+} @else {
+  <form class="modulo largo" (ngSubmit)="salva()" novalidate>
+    <h1>{{ modifica ? 'Modifica torneo' : 'Nuovo torneo' }}</h1>
+    @if (!modifica) {
+      <p class="intro">Il torneo viene salvato in bozza: gli utenti lo vedono solo quando apri le iscrizioni.</p>
+    }
+
+    @if (erroreServer()) {
+      <div class="banner-errore">{{ erroreServer() }}</div>
+    }
+
+    @let e = errori();
+
+    <div class="campo">
+      <label for="nome">Nome del torneo</label>
+      <input id="nome" name="nome" maxlength="100" [(ngModel)]="nome" placeholder="Es. Valorant Cup" [class.sbagliato]="sbagliato('nome')" />
+      @if (sbagliato('nome')) { <span class="aiuto">{{ e.nome }}</span> }
+    </div>
+
+    <div class="campo">
+      <span class="etichetta">Immagine (jpg o png, max 2 MB)</span>
+      <div class="immagine">
+        <div class="anteprima">
+          @if (anteprima(); as url) {
+            <img [src]="url" alt="Anteprima" />
+          } @else {
+            <span>Nessuna immagine</span>
+          }
+        </div>
+        <label class="btn scegli">
+          {{ anteprima() ? 'Cambia immagine' : 'Carica immagine' }}
+          <input type="file" accept="image/png, image/jpeg" (change)="scegliFile($event)" hidden />
+        </label>
+      </div>
+      @if (erroreFile()) { <span class="aiuto">{{ erroreFile() }}</span> }
+    </div>
+
+    <div class="griglia-campi">
+      <div class="campo">
+        <label for="categoria">Categoria</label>
+        <select id="categoria" name="categoria" [ngModel]="idTipologia" (ngModelChange)="scegliTipologia($event)" [disabled]="formatoBloccato()">
+          <option [ngValue]="null">Tutte</option>
+          @for (t of tipologie(); track t.id) {
+            <option [ngValue]="t.id">{{ t.nome }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="gioco">Gioco</label>
+        <select id="gioco" name="gioco" [ngModel]="idGioco" (ngModelChange)="scegliGioco($event)"
+                [disabled]="formatoBloccato()" [class.sbagliato]="sbagliato('gioco')">
+          <option [ngValue]="null">Scegli il gioco</option>
+          @for (g of giochiDellaCategoria(); track g.id) {
+            <option [ngValue]="g.id">{{ g.nome }}</option>
+          }
+        </select>
+        @if (sbagliato('gioco')) { <span class="aiuto">{{ e.gioco }}</span> }
+      </div>
+    </div>
+
+    <div class="campo">
+      <span class="etichetta">Piattaforme</span>
+      <div class="piattaforme">
+        @for (p of piattaforme(); track p.id) {
+          <button type="button" class="piattaforma" [class.scelta]="idPiattaforme.includes(p.id)" (click)="cambiaPiattaforma(p.id)">
+            <span>{{ p.nome }}</span>
+          </button>
+        }
+      </div>
+      @if (sbagliato('piattaforme')) { <span class="aiuto">{{ e.piattaforme }}</span> }
+    </div>
+
+    <div class="griglia-campi">
+      <div class="campo">
+        <label for="apertura">Apertura iscrizioni</label>
+        <input id="apertura" name="apertura" type="datetime-local" [(ngModel)]="apertura" [class.sbagliato]="sbagliato('apertura')" />
+        @if (sbagliato('apertura')) { <span class="aiuto">{{ e.apertura }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="chiusura">Chiusura iscrizioni</label>
+        <input id="chiusura" name="chiusura" type="datetime-local" [(ngModel)]="chiusura" [class.sbagliato]="sbagliato('chiusura')" />
+        @if (sbagliato('chiusura')) { <span class="aiuto">{{ e.chiusura }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="giocatori">Giocatori per squadra</label>
+        <input id="giocatori" name="giocatori" type="number" min="1" [(ngModel)]="giocatoriPerSquadra"
+               [disabled]="formatoBloccato()" [class.sbagliato]="sbagliato('giocatori')" />
+        <span class="suggerimento">1 = torneo individuale</span>
+        @if (sbagliato('giocatori')) { <span class="aiuto">{{ e.giocatori }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="posti">Posti massimi</label>
+        <input id="posti" name="posti" type="number" min="2" [(ngModel)]="postiMax" [class.sbagliato]="sbagliato('posti')" />
+        @if (sbagliato('posti')) { <span class="aiuto">{{ e.posti }}</span> }
+      </div>
+
+      <div class="campo">
+        <label for="premio">Montepremi</label>
+        <input id="premio" name="premio" maxlength="50" [(ngModel)]="premio" placeholder="Es. 200 € (facoltativo)" />
+      </div>
+    </div>
+
+    @if (formatoBloccato()) {
+      <p class="nota">Ci sono già iscrizioni: gioco e giocatori per squadra non si possono cambiare.</p>
+    }
+
+    <div class="campo">
+      <label for="descrizione">Descrizione</label>
+      <textarea id="descrizione" name="descrizione" rows="4" maxlength="1000" [(ngModel)]="descrizione" placeholder="Facoltativa"></textarea>
+      <span class="suggerimento">{{ descrizione.length }}/1000 caratteri</span>
+    </div>
+
+    <button type="submit" class="btn btn-verde" [disabled]="salvataggio()">
+      @if (salvataggio()) { Salvataggio… } @else { {{ modifica ? 'Salva modifiche' : 'Crea torneo' }} }
+    </button>
+  </form>
+}

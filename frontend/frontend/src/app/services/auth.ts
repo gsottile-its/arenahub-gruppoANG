@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, delay, map, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { DatiProfilo, DatiRegistrazione, RispostaLogin, Utente, UtenteLoggato } from '../models/utente';
-import { EMAIL_PROVA, MockDb, PASSWORD_PROVA, RITARDO_MOCK, erroreMock } from './mock-db';
+import { EMAIL_ADMIN, EMAIL_PROVA, MockDb, PASSWORD_ADMIN, PASSWORD_PROVA, RITARDO_MOCK, erroreMock } from './mock-db';
+
+// solo per i mock: l'account admin di prova
+const ADMIN_MOCK: Utente = { id: 1, nickname: 'admin', nome: 'Admin', cognome: 'ArenaHub', email: EMAIL_ADMIN, ruolo: 'admin' };
 
 export const CHIAVE_TOKEN = 'arenahub_token';
 const CHIAVE_UTENTE = 'arenahub_utente';
@@ -32,11 +35,13 @@ export class AuthService {
     const chiamata = environment.useMock
       ? this.http.get<RispostaLogin>('mock/login.json').pipe(
           delay(RITARDO_MOCK),
-          switchMap(risposta =>
-            email === EMAIL_PROVA && password === PASSWORD_PROVA
-              ? of(risposta)
-              : erroreMock(401, { errore: 'Email o password non corretti' })
-          )
+          switchMap(risposta => {
+            if (email === EMAIL_PROVA && password === PASSWORD_PROVA) return of(risposta);
+            if (email === EMAIL_ADMIN && password === PASSWORD_ADMIN) {
+              return of({ token: 'token-finto-admin', utente: { id: ADMIN_MOCK.id, nickname: ADMIN_MOCK.nickname, ruolo: ADMIN_MOCK.ruolo } });
+            }
+            return erroreMock(401, { errore: 'Email o password non corretti' });
+          })
         )
       : this.http.post<RispostaLogin>(`${environment.apiUrl}/auth/login`, { email, password });
 
@@ -75,7 +80,7 @@ export class AuthService {
     }
     return this.http.get<Utente>('mock/me.json').pipe(
       delay(RITARDO_MOCK),
-      map(risposta => this.mockDb.profilo() ?? risposta)
+      map(risposta => (this.admin() ? ADMIN_MOCK : this.mockDb.profilo() ?? risposta))
     );
   }
 

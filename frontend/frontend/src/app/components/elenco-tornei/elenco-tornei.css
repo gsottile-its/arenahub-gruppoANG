@@ -1,13 +1,11 @@
-.intestazione {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-}
+.titolo { margin-bottom: 20px; }
+.titolo .verde { color: var(--accento); }
 
 .viste {
   display: flex;
+  margin-left: auto;
+  margin-right: 8px;
+  flex-shrink: 0;
   background: var(--card);
   padding: 4px;
   transform: skewX(-12deg);
@@ -16,8 +14,8 @@
 .viste svg { transform: skewX(12deg); }
 
 .viste button {
-  width: 42px;
-  height: 38px;
+  width: 40px;
+  height: 32px;
   border: none;
   background: transparent;
   color: var(--testo-tenue);
@@ -33,12 +31,13 @@
 
 .barra-strumenti {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .cerca {
-  flex: 1;
+  flex: 0 1 720px;
   margin-left: 8px;
   transform: skewX(-12deg);
   display: flex;
@@ -94,100 +93,133 @@
   font-size: 0.8rem;
 }
 
+/* filtri extra: tendine leggere, dritte e senza fondo, con una linea sotto
+   che diventa verde quando il filtro è attivo */
 .pannello-filtri {
-  border-left: 3px solid var(--accento);
-  background-image: var(--texture-chiara);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  align-items: end;
-  padding: 16px;
-  margin-bottom: 12px;
-  background: var(--card);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+  margin: 4px 0 18px 8px;
+  animation: scendi 0.2s ease-out;
 }
 
-.pannello-filtri label {
+@keyframes scendi { from { opacity: 0; transform: translateY(-6px); } }
+
+.tendina {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #3a3a3a;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.tendina:hover { border-bottom-color: #6a6a6a; }
+
+.tendina span {
+  font-family: var(--font-titoli);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--testo-tenue);
+  transition: color 0.2s;
+}
+
+.tendina select {
+  appearance: none;
+  min-width: 96px;
+  padding: 0 22px 0 0;
+  border: none;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c3ff6b' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right center / 12px;
+  color: var(--testo);
+  font-family: var(--font-testo);
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.tendina select option { background: #1c1c1c; color: var(--testo); }
+
+.tendina.attiva { border-bottom-color: var(--accento); }
+.tendina.attiva span { color: var(--accento); }
+.tendina:focus-within { border-bottom-color: var(--accento); }
+
+.azzera {
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: var(--testo-tenue);
   font-family: var(--font-titoli);
   font-size: 0.85rem;
   text-transform: uppercase;
-  color: var(--testo-tenue);
-}
-
-.pannello-filtri select {
-  padding: 10px;
-  background: #1c1c1c;
-  border: 1px solid #444;
-  color: var(--testo);
-  font-family: var(--font-testo);
-}
-
-.azzera {
-  padding: 10px;
-  border: 1px solid #444;
-  background: none;
-  color: var(--testo);
-  font-family: var(--font-titoli);
-  text-transform: uppercase;
+  letter-spacing: 0.5px;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
-.azzera:hover { border-color: var(--accento); color: var(--accento); }
+.azzera:hover { color: var(--accento); }
 
 .nota { color: var(--testo-tenue); margin: 0 0 16px; }
 
+/* filtri di stato: schede inclinate con una riga sottile a sinistra del loro colore.
+   col mouse sopra (o se attive) si riempiono di quel colore e il testo diventa nero */
+/* filtri di stato subito sotto la ricerca */
 .filtri {
-  transform: skewX(-12deg);
-  margin-left: 8px;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  width: fit-content;
-  max-width: 100%;
-  padding: 4px;
-  margin-bottom: 32px;
-  background: var(--card);
+  gap: 8px;
+  margin-left: 8px;
+}
+
+/* riga subito sopra le card con le viste a destra */
+.barra-elenco {
+  display: flex;
+  justify-content: flex-end;
+  margin: 24px 0 18px;
 }
 
 .filtro {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
+  --colore: var(--accento);
+  padding: 7px 20px 5px 14px;
+  line-height: 1;
   border: none;
-  background: transparent;
+  box-shadow: inset 3px 0 0 var(--colore);
+  background-color: #242424;
+  background-image: var(--texture-chiara);
   color: var(--testo-tenue);
   font-family: var(--font-titoli);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transform: skewX(-12deg);
+  transition: color 0.2s, background-color 0.2s;
 }
 
-.filtro .etichetta { display: inline-flex; align-items: center; gap: 8px; transform: skewX(12deg); }
-.filtro:hover { color: var(--testo); background: #333; }
-.filtro.attivo { background: var(--accento); color: #111; }
+.filtro .etichetta { display: inline-flex; align-items: center; gap: 7px; transform: skewX(12deg); }
+.filtro app-icona { color: var(--colore); transition: color 0.2s; }
 
-.pallino {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #888;
+.filtro[data-stato='iscrizioni_aperte'] { --colore: var(--accento); }
+.filtro[data-stato='in_corso'] { --colore: #ffd23f; }
+.filtro[data-stato='concluso'] { --colore: #d4d4d4; }
+.filtro[data-stato='annullato'] { --colore: #ff4d4d; }
+
+.filtro:hover,
+.filtro.attivo {
+  background-color: var(--colore);
+  background-image: var(--texture-scura);
+  color: #111;
 }
-.pallino.iscrizioni_aperte { background: var(--accento); box-shadow: 0 0 6px var(--accento); }
-.pallino.in_corso          { background: #ffd23f; box-shadow: 0 0 6px #ffd23f; }
-.pallino.concluso          { background: #d4d4d4; }
-.pallino.annullato         { background: #ff4d4d; box-shadow: 0 0 6px #ff4d4d; }
 
-.filtro.attivo .pallino { background: #111; box-shadow: none; }
+.filtro:hover app-icona,
+.filtro.attivo app-icona { color: #111; }
 
 .elenco {
   padding: 0 14px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -231,5 +263,6 @@
 
 .paginazione button span { display: inline-block; transform: skewX(12deg); }
 .paginazione button:hover:not(:disabled) { background: #333; }
-.paginazione button.attivo { background: var(--accento); color: #111; }
+.paginazione button.attivo,
+.paginazione button.attivo:hover { background: var(--accento); color: #111; cursor: default; }
 .paginazione button:disabled { opacity: 0.3; cursor: default; }

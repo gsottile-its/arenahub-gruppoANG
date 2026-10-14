@@ -8,35 +8,40 @@ import { Gioco, Piattaforma, Tipologia } from '../../models/catalogo';
 import { CataloghiService } from '../../services/cataloghi';
 import { CardTorneo } from '../card-torneo/card-torneo';
 import { DettaglioTorneo } from '../dettaglio-torneo/dettaglio-torneo';
+import { Icona, NomeIcona } from '../icona/icona';
 
 export type CaricaTornei = (stato: StatoTorneo | null, pagina: number) => Observable<PaginaTornei>;
 
 @Component({
   selector: 'app-elenco-tornei',
-  imports: [CardTorneo, DettaglioTorneo, FormsModule],
+  imports: [CardTorneo, DettaglioTorneo, FormsModule, Icona],
   templateUrl: './elenco-tornei.html',
   styleUrl: './elenco-tornei.css'
 })
 export class ElencoTornei implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private cataloghi = inject(CataloghiService);
 
   titolo = input.required<string>();
+  evidenza = input('');
   carica = input.required<CaricaTornei>();
   messaggioVuoto = input('Nessun torneo');
 
-  filtriStato: { testo: string; stato: StatoTorneo | null }[] = [
-    { testo: 'Tutti', stato: null },
-    { testo: 'Iscrizioni aperte', stato: 'iscrizioni_aperte' },
-    { testo: 'In corso', stato: 'in_corso' },
-    { testo: 'Conclusi', stato: 'concluso' },
-    { testo: 'Cancellati', stato: 'annullato' }
-  ];
+  // nella pagina tornei il filtro cancellati non serve: chi cerca un torneo non cerca quelli annullati
+  conCancellati = input(true);
+
+  filtriStato = computed<{ testo: string; stato: StatoTorneo | null; icona: NomeIcona }[]>(() => [
+    { testo: 'Tutti', stato: null, icona: 'tutti' },
+    { testo: 'Aperti', stato: 'iscrizioni_aperte', icona: 'iscrizioni_aperte' },
+    { testo: 'In corso', stato: 'in_corso', icona: 'in_corso' },
+    { testo: 'Conclusi', stato: 'concluso', icona: 'concluso' },
+    ...(this.conCancellati() ? [{ testo: 'Cancellati', stato: 'annullato' as const, icona: 'annullato' as const }] : [])
+  ]);
   formati = [1, 2, 3, 4, 5];
 
   tornei = signal<TorneoCard[]>([]);
   filtroStato = signal<StatoTorneo | null>(null);
-  vista = signal<'griglia' | 'lista'>('griglia');
   pagina = signal(1);
   pagineTotali = signal(1);
   caricamento = signal(true);
@@ -55,8 +60,14 @@ export class ElencoTornei implements OnInit {
 
   // il popup si apre con ?torneo=id nell'indirizzo: la pagina sotto resta la stessa
   idAperto = toSignal(
-    inject(ActivatedRoute).queryParamMap.pipe(map(p => (p.get('torneo') ? Number(p.get('torneo')) : null))),
+    this.route.queryParamMap.pipe(map(p => (p.get('torneo') ? Number(p.get('torneo')) : null))),
     { initialValue: null }
+  );
+
+  // anche la vista sta nell'indirizzo (?vista=lista): così resta uguale dopo il login o tornando indietro
+  vista = toSignal(
+    this.route.queryParamMap.pipe(map(p => (p.get('vista') === 'lista' ? 'lista' : 'griglia') as 'griglia' | 'lista')),
+    { initialValue: 'griglia' as 'griglia' | 'lista' }
   );
 
   numeriPagina = computed(() => Array.from({ length: this.pagineTotali() }, (_, i) => i + 1));
@@ -109,10 +120,18 @@ export class ElencoTornei implements OnInit {
   }
 
   vaiAPagina(nuova: number) {
-    if (nuova < 1 || nuova > this.pagineTotali()) return;
+    if (nuova < 1 || nuova > this.pagineTotali() || nuova === this.pagina()) return;
     this.pagina.set(nuova);
     this.ricarica();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cambiaVista(vista: 'griglia' | 'lista') {
+    this.router.navigate([], {
+      queryParams: { vista: vista === 'lista' ? 'lista' : null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   apriDettaglio(id: number) {

@@ -1,0 +1,58 @@
+<a routerLink="/admin" class="indietro">← Area admin</a>
+
+<div class="intestazione">
+  <h1>Gestione <span class="verde">tornei</span></h1>
+  <a routerLink="/admin/tornei/nuovo" class="btn btn-verde">+ Crea torneo</a>
+</div>
+
+<div class="filtri">
+  @for (f of filtriStato; track f.testo) {
+    <button class="filtro" [attr.data-stato]="f.stato ?? 'tutti'" [class.attivo]="filtroStato() === f.stato" (click)="scegliStato(f.stato)">
+      <span>{{ f.testo }}</span>
+    </button>
+  }
+</div>
+
+@if (caricamento()) {
+  <p class="messaggio">Caricamento…</p>
+} @else if (errore()) {
+  <div class="messaggio errore">
+    {{ errore() }}
+    <button class="btn" (click)="carica()">Riprova</button>
+  </div>
+} @else {
+  <div class="elenco">
+    @for (t of tornei(); track t.id) {
+      <article class="riga">
+        <a [routerLink]="['/admin/tornei', t.id]" class="miniatura">
+          @if (t.urlImmagine) {
+            <img [src]="t.urlImmagine" [alt]="t.nome" />
+          } @else {
+            <span>{{ t.gioco }}</span>
+          }
+        </a>
+
+        <div class="dati">
+          <h3>{{ t.nome }}</h3>
+          <p>{{ t.gioco }} · {{ t.piattaforme.join(', ') }} · {{ t.giocatoriPerSquadra }} vs {{ t.giocatoriPerSquadra }}</p>
+          <p [class.pieno]="t.iscritti >= t.postiMax">Posti {{ t.iscritti }}/{{ t.postiMax }}</p>
+        </div>
+
+        <span class="chip" [class]="t.stato">{{ testiStato[t.stato] }}</span>
+        <a [routerLink]="['/admin/tornei', t.id]" class="btn gestisci">Gestisci</a>
+      </article>
+    } @empty {
+      <p class="messaggio">Nessun torneo in questo stato.</p>
+    }
+  </div>
+
+  @if (pagineTotali() > 1) {
+    <nav class="paginazione">
+      <button [disabled]="pagina() === 1" (click)="vaiAPagina(pagina() - 1)"><span>‹</span></button>
+      @for (n of numeriPagina(); track n) {
+        <button [class.attivo]="n === pagina()" (click)="vaiAPagina(n)"><span>{{ n }}</span></button>
+      }
+      <button [disabled]="pagina() === pagineTotali()" (click)="vaiAPagina(pagina() + 1)"><span>›</span></button>
+    </nav>
+  }
+}

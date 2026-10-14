@@ -1,0 +1,37 @@
+{
+  "id": 16,
+  "nome": "Apex Trio Royale",
+  "descrizione": "Torneo a squadre da tre di Apex Legends. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/apex-legends.webp",
+  "gioco": {
+    "id": 17,
+    "nome": "Apex Legends",
+    "tipologia": "FPS"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    },
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 3,
+      "nome": "Xbox"
+    }
+  ],
+  "giocatoriPerSquadra": 3,
+  "postiMax": 20,
+  "iscritti": 9,
+  "premio": null,
+  "aperturaIscrizioni": "2026-10-14T00:00:00",
+  "chiusuraIscrizioni": "2026-11-20T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}

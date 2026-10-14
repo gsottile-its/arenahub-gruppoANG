@@ -1,0 +1,19 @@
+<section class="pannello">
+  <span class="etichetta">Area amministrazione</span>
+  <h1>Ciao <span class="verde">{{ auth.utente()?.nickname }}</span></h1>
+  <p class="sottotitolo">Da qui crei i tornei, li apri alle iscrizioni e gestisci gli iscritti.</p>
+
+  <div class="tessere">
+    <a routerLink="/admin/tornei" class="tessera principale">
+      <span class="numero">01</span>
+      <span class="titolo">Gestione tornei</span>
+      <span class="testo">Elenco completo, bozze comprese, con stato e iscritti di ogni torneo.</span>
+    </a>
+
+    <a routerLink="/admin/tornei/nuovo" class="tessera">
+      <span class="numero">02</span>
+      <span class="titolo">Crea torneo</span>
+      <span class="testo">Nuovo torneo in bozza: lo pubblichi quando è pronto.</span>
+    </a>
+  </div>
+</section>

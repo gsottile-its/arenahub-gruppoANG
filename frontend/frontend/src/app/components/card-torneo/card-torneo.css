@@ -19,7 +19,7 @@
 .card h3,
 .card .info,
 .card .btn > span,
-.card .chip-completo { display: block; transform: skewX(var(--inclinazione)); }
+.card .chip { display: block; transform: skewX(var(--inclinazione)); }
 
 .card .immagine img,
 .card .immagine-vuota { transform: skewX(var(--inclinazione)) scale(1.12); }
@@ -75,6 +75,17 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
 
 .titolo:hover { color: var(--accento); }
 
+/* icona allineata alla prima riga del testo, anche se il testo va a capo */
+.info li,
+.linea span { display: flex; align-items: flex-start; gap: 8px; }
+.info li app-icona { height: 1.8em; align-items: center; }
+.linea span app-icona { height: 1.5em; align-items: center; }
+
+/* testi lunghi (anche senza spazi) vanno a capo invece di allargare la card */
+h3, .titolo, .info li, .linea span, .filigrana { overflow-wrap: anywhere; }
+.card, .testo { min-width: 0; }
+.riga h3 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
 .info {
   flex: 1;
   list-style: none;
@@ -90,29 +101,33 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
 .azioni { display: flex; }
 .azioni .btn { flex: 1; text-align: center; }
 
-.esaurito .immagine img,
-.esaurito .immagine-vuota,
-.esaurito .copertina img,
-.esaurito .copertina-vuota { filter: grayscale(1) brightness(0.6); }
-
-.chip-completo {
+/* chip dello stato, in alto sull'immagine */
+.chip {
   position: absolute;
   top: 10px;
   left: 16px;
   padding: 4px 10px;
-  background: #ff4d4d;
-  color: #fff;
+  background: #d4d4d4;
+  color: #111;
   font-family: var(--font-titoli);
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+
+.chip.iscrizioni_aperte { background: var(--accento); }
+.chip.iscrizioni_chiuse { background: #ff9f43; }
+.chip.in_corso { background: #ffd23f; }
+.chip.annullato,
+.chip.completo { background: #ff4d4d; color: #fff; }
+
+.btn-giallo { background-color: #ffd23f; color: #111; }
 
 /* lista: riga larga come le schede dei personaggi di smash bros */
 .riga {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 38%;
-  min-height: 170px;
+  height: 165px;
   overflow: hidden;
   background-color: var(--card);
   background-image: var(--texture-chiara);
@@ -129,7 +144,7 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--font-titoli);
-  font-size: 9rem;
+  font-size: 6.5rem;
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
@@ -142,25 +157,27 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
-  padding: 22px 28px;
+  gap: 8px;
+  padding: 14px 24px;
 }
 
-.riga h3 { margin: 0; font-size: 2.4rem; line-height: 1; }
+.riga h3 { margin: 0; font-size: 1.7rem; line-height: 1; }
 
 .linea {
+  line-height: 1.5;
   display: flex;
   flex-wrap: wrap;
   gap: 6px 0;
-  padding-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid #444;
+  font-size: 0.92rem;
   color: var(--testo-tenue);
 }
 
 .linea span { padding: 0 18px; border-left: 2px solid #3a3a3a; }
 .linea span:first-child { padding-left: 0; border-left: none; }
 
-.riga .azioni .btn { flex: 0 0 auto; min-width: 180px; }
+.riga .azioni .btn { flex: 0 0 auto; min-width: 160px; padding: 8px 18px; }
 
 .copertina {
   position: relative;
@@ -172,8 +189,9 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
   clip-path: polygon(16% 0, 100% 0, 100% 100%, 0 100%);
 }
 
+.copertina img { position: absolute; inset: 0; }
 .copertina-vuota { font-size: 2.2rem; }
-.copertina .chip-completo { left: auto; right: 16px; }
+.copertina .chip { left: auto; right: 16px; }
 
 .etichetta {
   position: absolute;
@@ -188,18 +206,7 @@ h3 { margin: 12px 0 8px; font-size: 1.4rem; }
 }
 
 @media (max-width: 640px) {
-  .riga { grid-template-columns: 1fr; }
+  .riga { grid-template-columns: 1fr; height: auto; }
   .copertina { order: -1; height: 140px; clip-path: none; }
-  .riga h3 { font-size: 1.8rem; }
-}
-
-.btn-completo,
-.btn-completo:hover {
-  background-color: transparent;
-  background-image: repeating-linear-gradient(-45deg, rgba(255, 77, 77, 0.12) 0 1px, transparent 1px 5px);
-  color: #ff8080;
-  border: 1px solid #ff4d4d;
-  cursor: not-allowed;
-  filter: none;
-  transform: none;
+  .riga h3 { font-size: 1.5rem; }
 }

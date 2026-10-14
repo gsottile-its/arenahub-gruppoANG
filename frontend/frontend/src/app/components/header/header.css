@@ -1,7 +1,12 @@
-.header {
+/* la navbar resta in alto mentre scorri */
+:host {
   position: sticky;
   top: 0;
   z-index: 20;
+  display: block;
+}
+
+.header {
   display: flex;
   align-items: center;
   gap: 32px;
@@ -20,10 +25,21 @@
 
 .logo span { color: var(--accento); }
 
+/* linea sottile inclinata che stacca il logo dalle voci del menu */
+.logo::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 26px;
+  margin-left: 32px;
+  vertical-align: middle;
+  background: var(--accento);
+  transform: skewX(-12deg);
+}
+
 .menu {
   display: flex;
   gap: 28px;
-  margin-left: auto;
 }
 
 .menu a {
@@ -38,6 +54,10 @@
 
 .menu a:hover { color: var(--accento); }
 
+/* voce admin: piccola etichetta che la distingue dalle altre */
+.menu .voce-admin { padding: 2px 8px 4px; background: #2c2c2c; }
+.menu .voce-admin.attivo { background: var(--accento); color: #111; border-bottom-color: transparent; }
+
 .menu a.attivo {
   color: var(--accento);
   border-bottom-color: var(--accento);
@@ -47,6 +67,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
 }
 
 .icona {
@@ -100,25 +121,35 @@
 .tendina a:hover,
 .tendina button:hover { background: #333; color: var(--accento); }
 
-/* login e ciao: scuri con righe sottili, che si illuminano al passaggio del mouse */
+/* login e ciao: sfondo verde inclinato, il testo resta dritto */
 .pulsante-header {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  padding: 11px 20px;
+  padding: 11px 22px;
   border: none;
-  background-color: var(--accento);
-  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 5px);
+  background: none;
   color: #111;
   font-family: var(--font-titoli);
   font-size: 1rem;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: background-image 0.25s;
 }
 
-.pulsante-header:hover {
+.pulsante-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--accento);
+  background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 5px);
+  transform: skewX(-12deg);
+}
+
+.pulsante-header:hover::before {
   background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 5px);
 }
 

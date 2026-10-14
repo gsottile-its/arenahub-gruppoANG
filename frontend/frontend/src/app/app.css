@@ -14,3 +14,22 @@
 }
 
 main { width: 100%; flex: 1; }
+
+/* sfondo comune: dietro a tutto il contenuto, non si muove con lo scorrimento */
+.sfondo-sito {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #171917;
+  pointer-events: none;
+}
+
+.motivi {
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 200px, #000 calc(100% - 120px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 200px, #000 calc(100% - 120px), transparent 100%);
+}
+
+.motivi path { fill: rgba(255, 255, 255, 0.025); }
+.motivi .chiaro { fill: rgba(255, 255, 255, 0.04); }

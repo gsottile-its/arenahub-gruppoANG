@@ -1,0 +1,116 @@
+<a routerLink="/admin/tornei" class="indietro">← Gestione tornei</a>
+
+@if (caricamento()) {
+  <p class="messaggio">Caricamento…</p>
+} @else if (errore()) {
+  <p class="messaggio errore">{{ errore() }}</p>
+} @else {
+  @let t = torneo()!;
+
+  <header class="intestazione">
+    <div>
+      <span class="etichetta">Gestisci</span>
+      <h1>{{ t.nome }}</h1>
+      <p class="dettagli">
+        {{ t.gioco.nome }} · {{ t.giocatoriPerSquadra }} vs {{ t.giocatoriPerSquadra }} ·
+        Posti <strong [class.pieno]="t.iscritti >= t.postiMax">{{ t.iscritti }}/{{ t.postiMax }}</strong> ·
+        Iscrizioni {{ t.aperturaIscrizioni | date: 'dd/MM HH:mm' }} – {{ t.chiusuraIscrizioni | date: 'dd/MM HH:mm' }}
+      </p>
+    </div>
+    <span class="chip" [class]="t.stato">{{ testiStato[t.stato] }}</span>
+  </header>
+
+  <section class="azioni">
+    <div class="stato">
+      <span class="etichetta">Stato</span>
+      @if (statiSuccessivi().length > 0) {
+        <select [(ngModel)]="nuovoStato" [disabled]="inAzione()">
+          @for (s of statiSuccessivi(); track s) {
+            <option [ngValue]="s">{{ testiStato[s] }}</option>
+          }
+        </select>
+        <button class="btn btn-verde" [disabled]="inAzione()" (click)="applicaStato(nuovoStato)">Applica</button>
+      } @else {
+        <span class="nota">Nessun altro stato possibile.</span>
+      }
+    </div>
+
+    <div class="pulsanti">
+      @if (modificabile()) {
+        <a [routerLink]="['/admin/tornei', t.id, 'modifica']" class="btn">Modifica dati</a>
+      }
+      @if (annullabile()) {
+        @if (confermaAnnulla()) {
+          <span class="domanda">Annullare il torneo?</span>
+          <button class="btn btn-rosso" [disabled]="inAzione()" (click)="applicaStato('annullato')">Sì, annulla</button>
+          <button class="btn" (click)="confermaAnnulla.set(false)">No</button>
+        } @else {
+          <button class="btn btn-rosso" (click)="confermaAnnulla.set(true)">Annulla torneo</button>
+        }
+      }
+    </div>
+  </section>
+
+  @if (t.stato === 'iscrizioni_chiuse') {
+    <p class="avviso">Per avviare il torneo («In corso») genera prima il tabellone.</p>
+  }
+
+  <section class="iscritti">
+    <h2>Iscritti</h2>
+
+    @if (caricamentoIscritti()) {
+      <p class="messaggio">Caricamento…</p>
+    } @else if (erroreIscritti()) {
+      <p class="messaggio errore">{{ erroreIscritti() }}</p>
+    } @else if (iscrizioni().length === 0) {
+      <p class="messaggio">Ancora nessun iscritto.</p>
+    } @else {
+      <div class="tabella">
+        <div class="riga titoli">
+          <span>{{ t.giocatoriPerSquadra > 1 ? 'Squadra' : 'Giocatore' }}</span>
+          <span>Iscritto il</span>
+          <span>Stato</span>
+          <span>Azioni</span>
+        </div>
+        @for (i of iscrizioni(); track i.id) {
+          <div class="riga">
+            <span class="nome">{{ i.nome }}</span>
+            <span>{{ i.dataIscrizione | date: 'dd/MM/yyyy' }}</span>
+            <span class="stato-iscrizione" [class]="i.stato">
+              {{ testiIscrizione[i.stato] }}
+              @if (i.posizioneAttesa) { ({{ i.posizioneAttesa }}°) }
+            </span>
+            <span class="comandi">
+              @if (daRimuovere() === i.id) {
+                <button class="mini rosso" [disabled]="inAzione()" (click)="rimuovi(i)">Sì, rimuovi</button>
+                <button class="mini" (click)="daRimuovere.set(null)">No</button>
+              } @else {
+                @if (i.stato === 'in_attesa') {
+                  <button class="mini verde" [disabled]="inAzione()" (click)="conferma(i)">Conferma</button>
+                }
+                <button class="mini" [disabled]="inAzione()" (click)="daRimuovere.set(i.id)">Rimuovi</button>
+              }
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (pagineIscritti() > 1) {
+        <div class="pagine">
+          <button class="mini" [disabled]="paginaIscritti() === 1" (click)="cambiaPaginaIscritti(paginaIscritti() - 1)">‹</button>
+          <span>Pagina {{ paginaIscritti() }} di {{ pagineIscritti() }}</span>
+          <button class="mini" [disabled]="paginaIscritti() === pagineIscritti()" (click)="cambiaPaginaIscritti(paginaIscritti() + 1)">›</button>
+        </div>
+      }
+    }
+  </section>
+
+  <section class="tabellone">
+    <button class="btn btn-verde grande" [disabled]="t.stato !== 'iscrizioni_chiuse' || tabelloneGenerato() || inAzione()" (click)="generaTabellone()">
+      Genera tabellone
+    </button>
+    <span class="nota">
+      @if (tabelloneGenerato()) { Tabellone generato. } @else { Disponibile a iscrizioni chiuse: accoppia a caso i partecipanti confermati. }
+    </span>
+  </section>
+}

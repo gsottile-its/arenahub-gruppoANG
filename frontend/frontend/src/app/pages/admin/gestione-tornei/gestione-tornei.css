@@ -1,0 +1,126 @@
+.indietro { display: inline-block; margin-bottom: 14px; color: var(--testo-tenue); text-decoration: none; }
+.indietro:hover { color: var(--accento); }
+
+.intestazione {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.intestazione h1 { margin: 0; }
+
+/* crea torneo e gestisci: tinta piena, senza righe */
+.intestazione .btn,
+.gestisci { background-image: none; }
+.verde { color: var(--accento); }
+
+/* stessi filtri inclinati della pagina tornei */
+.filtri { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px 8px; }
+
+.filtro {
+  --colore: var(--accento);
+  padding: 7px 16px 5px 14px;
+  line-height: 1;
+  border: none;
+  box-shadow: inset 3px 0 0 var(--colore);
+  background-color: #242424;
+  background-image: var(--texture-chiara);
+  color: var(--testo-tenue);
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transform: skewX(-12deg);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.filtro span { display: inline-block; transform: skewX(12deg); }
+.filtro[data-stato='bozza'] { --colore: #9a9a9a; }
+.filtro[data-stato='iscrizioni_chiuse'] { --colore: #ff9f43; }
+.filtro[data-stato='in_corso'] { --colore: #ffd23f; }
+.filtro[data-stato='concluso'] { --colore: #d4d4d4; }
+.filtro[data-stato='annullato'] { --colore: #ff4d4d; }
+
+.filtro:hover,
+.filtro.attivo { background-color: var(--colore); background-image: var(--texture-scura); color: #111; }
+
+.elenco { display: flex; flex-direction: column; gap: 12px; }
+
+.riga {
+  display: grid;
+  grid-template-columns: 180px 1fr auto auto;
+  align-items: center;
+  gap: 22px;
+  padding: 12px 20px 12px 12px;
+  background-color: var(--card);
+  background-image: var(--texture-chiara);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+
+.miniatura {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2f3d1f, #1a1a1a);
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.miniatura img { width: 100%; height: 100%; object-fit: cover; }
+
+.dati { min-width: 0; }
+.dati h3 { margin: 0 0 6px; font-size: 1.4rem; overflow-wrap: anywhere; }
+.dati p { overflow-wrap: anywhere; }
+.dati p { margin: 2px 0; color: var(--testo-tenue); font-size: 0.92rem; }
+.dati p.pieno { color: #ff8080; }
+
+.chip {
+  padding: 4px 10px;
+  background: #d4d4d4;
+  color: #111;
+  font-family: var(--font-titoli);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chip.bozza { background: #5a5a5a; color: #fff; }
+.chip.iscrizioni_aperte { background: var(--accento); }
+.chip.iscrizioni_chiuse { background: #ff9f43; }
+.chip.in_corso { background: #ffd23f; }
+.chip.annullato { background: #ff4d4d; color: #fff; }
+
+.gestisci { padding: 10px 22px; }
+
+.messaggio { color: var(--testo-tenue); }
+.messaggio.errore { display: flex; align-items: center; gap: 16px; color: #ff8080; }
+
+.paginazione { display: flex; justify-content: center; gap: 6px; margin-top: 32px; }
+
+.paginazione button {
+  min-width: 42px;
+  height: 42px;
+  border: none;
+  background: var(--card);
+  color: var(--testo);
+  font-family: var(--font-titoli);
+  cursor: pointer;
+  transform: skewX(-12deg);
+}
+
+.paginazione button span { display: inline-block; transform: skewX(12deg); }
+.paginazione button.attivo,
+.paginazione button.attivo:hover { background: var(--accento); color: #111; cursor: default; }
+.paginazione button:disabled { opacity: 0.3; cursor: default; }
+
+@media (max-width: 760px) {
+  .riga { grid-template-columns: 110px 1fr; }
+  .chip, .gestisci { justify-self: start; }
+}

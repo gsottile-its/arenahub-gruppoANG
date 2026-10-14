@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
 import { ToastService } from '../../services/toast';
-import { EMAIL_PROVA, PASSWORD_PROVA } from '../../services/mock-db';
+import { EMAIL_ADMIN, EMAIL_PROVA, PASSWORD_ADMIN, PASSWORD_PROVA } from '../../services/mock-db';
 
 export const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,6 +30,8 @@ export class Login {
   modalitaMock = environment.useMock;
   emailProva = EMAIL_PROVA;
   passwordProva = PASSWORD_PROVA;
+  emailAdmin = EMAIL_ADMIN;
+  passwordAdmin = PASSWORD_ADMIN;
 
   emailValida() {
     return FORMATO_EMAIL.test(this.email);

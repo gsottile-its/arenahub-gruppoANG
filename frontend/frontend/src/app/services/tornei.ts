@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, delay, map } from 'rxjs';
+import { Observable, catchError, delay, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PaginaTornei, StatoTorneo, TorneoCard, TorneoDettaglio } from '../models/torneo';
 import { AuthService } from './auth';
-import { MockDb, RITARDO_MOCK, erroreMock, paginaMock } from './mock-db';
+import { MockDb, RITARDO_MOCK, dettaglioACard, erroreMock, paginaMock } from './mock-db';
 
-export const TORNEI_PER_PAGINA = 10;
+// contratto: 10 per pagina. nel mock 12: da allineare col backend
+export const TORNEI_PER_PAGINA = 12;
 
 @Injectable({ providedIn: 'root' })
 export class TorneiService {
@@ -39,11 +40,16 @@ export class TorneiService {
     if (!environment.useMock) {
       return this.http.get<TorneoDettaglio>(`${environment.apiUrl}/tornei/${id}`);
     }
-    return this.http.get<TorneoDettaglio>(`mock/tornei/${id}.json`).pipe(
-      delay(RITARDO_MOCK),
+    // i tornei creati dall'admin esistono solo in memoria
+    const creato = this.mockDb.tornei()[id];
+    const sorgente = creato && id > 1000
+      ? of(creato).pipe(delay(RITARDO_MOCK))
+      : this.http.get<TorneoDettaglio>(`mock/tornei/${id}.json`).pipe(delay(RITARDO_MOCK));
+
+    return sorgente.pipe(
       map(t => {
         const aggiornato = this.mockDb.applicaADettaglio(t);
-
+        if (aggiornato.stato === 'bozza' && !this.auth.admin()) throw new Error('bozza');
         return this.auth.loggato() ? aggiornato : { ...aggiornato, miaIscrizione: null };
       }),
 
@@ -55,11 +61,16 @@ export class TorneiService {
     return this.http.get<PaginaTornei>('mock/tornei.json').pipe(
       delay(RITARDO_MOCK),
       map(risposta => {
-        let tornei = risposta.tornei
-          .filter(t => t.stato !== 'bozza' || this.auth.admin())
-          .map(t => this.mockDb.applicaACard(t));
+        // i tornei creati dall'admin vanno in cima, come fa il backend (ordine per id decrescente)
+        const creati = Object.values(this.mockDb.tornei())
+          .filter(t => t.id > 1000)
+          .sort((a, b) => b.id - a.id)
+          .map(t => dettaglioACard(t));
+        let tornei = [...creati, ...risposta.tornei]
+          .map(t => this.mockDb.applicaACard(t))
+          .filter(t => t.stato !== 'bozza' || this.auth.admin());
 
-        if (!this.auth.loggato()) {
+        if (!this.auth.loggato() || this.auth.admin()) {
           tornei = tornei.map(t => ({ ...t, mioStato: null }));
         }
         return tornei;

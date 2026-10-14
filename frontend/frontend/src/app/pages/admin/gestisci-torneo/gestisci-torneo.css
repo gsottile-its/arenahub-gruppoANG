@@ -1,0 +1,142 @@
+.indietro { display: inline-block; margin-bottom: 14px; color: var(--testo-tenue); text-decoration: none; }
+.indietro:hover { color: var(--accento); }
+
+.messaggio { color: var(--testo-tenue); }
+.messaggio.errore { color: #ff8080; }
+
+.etichetta {
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--testo-tenue);
+}
+
+.intestazione {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.intestazione h1 { margin: 4px 0 8px; overflow-wrap: anywhere; }
+.intestazione > div { min-width: 0; }
+.nome { overflow-wrap: anywhere; }
+.dettagli { margin: 0; color: var(--testo-tenue); }
+.dettagli strong { color: var(--testo); }
+.dettagli strong.pieno { color: #ff8080; }
+
+.chip {
+  padding: 6px 12px;
+  background: #d4d4d4;
+  color: #111;
+  font-family: var(--font-titoli);
+  text-transform: uppercase;
+}
+
+.chip.bozza { background: #5a5a5a; color: #fff; }
+.chip.iscrizioni_aperte { background: var(--accento); }
+.chip.iscrizioni_chiuse { background: #ff9f43; }
+.chip.in_corso { background: #ffd23f; }
+.chip.annullato { background: #ff4d4d; color: #fff; }
+
+/* barra azioni: stato a sinistra, pulsanti a destra */
+.azioni {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  background-color: var(--card);
+  background-image: var(--texture-chiara);
+  border-top: 3px solid var(--accento);
+}
+
+.stato, .pulsanti { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+.stato select {
+  appearance: none;
+  padding: 10px 36px 10px 12px;
+  background: #1c1c1c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c3ff6b' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 14px;
+  border: 1px solid #444;
+  color: var(--testo);
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-rosso { background-color: #ff4d4d; color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+.domanda { font-weight: 600; }
+.nota { color: var(--testo-tenue); font-size: 0.92rem; }
+.avviso { color: #ffd23f; margin: 0 0 14px; }
+
+.iscritti h2 { margin: 30px 0 14px; font-size: 1.6rem; }
+
+.tabella { display: flex; flex-direction: column; gap: 4px; }
+
+.riga {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.2fr 1.6fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--card);
+}
+
+.riga.titoli {
+  background: none;
+  padding-bottom: 4px;
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--testo-tenue);
+}
+
+.nome { font-weight: 600; }
+
+.stato-iscrizione { color: var(--testo-tenue); }
+.stato-iscrizione.confermata { color: var(--accento); }
+.stato-iscrizione.in_attesa { color: #ffd23f; }
+.stato-iscrizione.lista_attesa { color: #ff9f43; }
+
+.comandi { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* pulsanti piccoli della tabella */
+.mini {
+  padding: 6px 14px;
+  border: 1px solid #555;
+  background: none;
+  color: var(--testo);
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.mini:hover:not(:disabled) { border-color: var(--accento); color: var(--accento); }
+.mini.verde { background: var(--accento); border-color: var(--accento); color: #111; }
+.mini.verde:hover:not(:disabled) { color: #111; filter: brightness(0.92); }
+.mini.rosso { background: #ff4d4d; border-color: #ff4d4d; color: #fff; }
+.mini:disabled { opacity: 0.4; cursor: default; }
+
+.pagine { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px; color: var(--testo-tenue); }
+
+.tabellone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.grande { padding: 14px 28px; font-size: 1.05rem; }
+
+@media (max-width: 760px) {
+  .riga { grid-template-columns: 1fr 1fr; }
+  .riga.titoli { display: none; }
+}

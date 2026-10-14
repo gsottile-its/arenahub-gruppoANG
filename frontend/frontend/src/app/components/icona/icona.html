@@ -1,0 +1,38 @@
+<!-- icone a linea usate in card e filtri -->
+<span class="contenitore">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    @switch (nome()) {
+      @case ('giocatori') {
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+        <path d="M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2.1.7 3.5 2.6 3.5 5.7" />
+      }
+      @case ('piattaforme') {
+        <path d="M7 7h10a5 5 0 0 1 5 5v1a3.5 3.5 0 0 1-6.3 2.1L15 14H9l-.7 1.1A3.5 3.5 0 0 1 2 13v-1a5 5 0 0 1 5-5Z" />
+        <path d="M8 9.5v4M6 11.5h4M15.5 10.5h.01M17.5 12.5h.01" />
+      }
+      @case ('posti') {
+        <path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4Z" />
+        <path d="M15 7v2M15 11.5v1M15 15v2" />
+      }
+      @case ('tutti') {
+        <path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />
+      }
+      @case ('iscrizioni_aperte') {
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v8M8 12h8" />
+      }
+      @case ('in_corso') {
+        <path d="M8 5.5v13l10.5-6.5Z" />
+      }
+      @case ('concluso') {
+        <path d="M8 4h8v5a4 4 0 0 1-8 0Z" />
+        <path d="M8 6H5a3 3 0 0 0 3.3 4M16 6h3a3 3 0 0 1-3.3 4M12 13v4M8.5 20h7" />
+      }
+      @case ('annullato') {
+        <circle cx="12" cy="12" r="9" />
+        <path d="M5.7 5.7l12.6 12.6" />
+      }
+    }
+  </svg>
+</span>

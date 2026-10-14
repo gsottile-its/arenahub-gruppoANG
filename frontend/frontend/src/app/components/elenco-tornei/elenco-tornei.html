@@ -1,24 +1,9 @@
-<div class="intestazione">
-  <h1>{{ titolo() }}</h1>
-
-  <div class="viste">
-    <button [class.attivo]="vista() === 'griglia'" (click)="vista.set('griglia')" title="Vista a griglia">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
-        <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
-        <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
-        <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
-      </svg>
-    </button>
-    <button [class.attivo]="vista() === 'lista'" (click)="vista.set('lista')" title="Vista a lista">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="2" y="3" width="20" height="4" rx="1" />
-        <rect x="2" y="10" width="20" height="4" rx="1" />
-        <rect x="2" y="17" width="20" height="4" rx="1" />
-      </svg>
-    </button>
-  </div>
-</div>
+<h1 class="titolo">
+  @if (evidenza()) {
+    <span class="verde">{{ evidenza() }}</span>
+  }
+  {{ titolo() }}
+</h1>
 
 <div class="barra-strumenti">
   <label class="cerca">
@@ -38,8 +23,8 @@
 
 @if (pannelloFiltri()) {
   <div class="pannello-filtri">
-    <label>
-      Categoria
+    <label class="tendina" [class.attiva]="idTipologia() !== null">
+      <span>Categoria</span>
       <select [ngModel]="idTipologia()" (ngModelChange)="scegliTipologia($event)">
         <option [ngValue]="null">Tutte</option>
         @for (t of tipologie(); track t.id) {
@@ -47,8 +32,8 @@
         }
       </select>
     </label>
-    <label>
-      Gioco
+    <label class="tendina" [class.attiva]="nomeGioco() !== null">
+      <span>Gioco</span>
       <select [ngModel]="nomeGioco()" (ngModelChange)="nomeGioco.set($event)">
         <option [ngValue]="null">Tutti</option>
         @for (g of giochiDellaCategoria(); track g.id) {
@@ -56,8 +41,8 @@
         }
       </select>
     </label>
-    <label>
-      Piattaforma
+    <label class="tendina" [class.attiva]="nomePiattaforma() !== null">
+      <span>Piattaforma</span>
       <select [ngModel]="nomePiattaforma()" (ngModelChange)="nomePiattaforma.set($event)">
         <option [ngValue]="null">Tutte</option>
         @for (p of piattaforme(); track p.id) {
@@ -65,8 +50,8 @@
         }
       </select>
     </label>
-    <label>
-      Squadre
+    <label class="tendina" [class.attiva]="formato() !== null">
+      <span>Squadre</span>
       <select [ngModel]="formato()" (ngModelChange)="formato.set($event)">
         <option [ngValue]="null">Tutte</option>
         @for (f of formati; track f) {
@@ -74,21 +59,41 @@
         }
       </select>
     </label>
-    <button class="azzera" (click)="azzeraFiltri()">Azzera</button>
+    @if (filtriAttivi() > 0) {
+      <button class="azzera" (click)="azzeraFiltri()">✕ Azzera</button>
+    }
   </div>
 }
 
 <div class="filtri">
-  @for (f of filtriStato; track f.testo) {
-    <button class="filtro" [class.attivo]="filtroStato() === f.stato" (click)="scegliStato(f.stato)">
+  @for (f of filtriStato(); track f.testo) {
+    <button class="filtro" [attr.data-stato]="f.stato ?? 'tutti'" [class.attivo]="filtroStato() === f.stato" (click)="scegliStato(f.stato)">
       <span class="etichetta">
-        @if (f.stato) {
-          <span class="pallino" [class]="f.stato"></span>
-        }
+        <app-icona [nome]="f.icona" />
         {{ f.testo }}
       </span>
     </button>
   }
+</div>
+
+<div class="barra-elenco">
+  <div class="viste">
+    <button [class.attivo]="vista() === 'griglia'" (click)="cambiaVista('griglia')" title="Vista a griglia">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" />
+        <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" />
+        <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" />
+        <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" />
+      </svg>
+    </button>
+    <button [class.attivo]="vista() === 'lista'" (click)="cambiaVista('lista')" title="Vista a lista">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="3" width="20" height="4" rx="1" />
+        <rect x="2" y="10" width="20" height="4" rx="1" />
+        <rect x="2" y="17" width="20" height="4" rx="1" />
+      </svg>
+    </button>
+  </div>
 </div>
 
 @if (caricamento()) {
@@ -108,10 +113,7 @@
       <app-card-torneo [torneo]="t" [vista]="vista()" (apri)="apriDettaglio($event)" />
     } @empty {
       @if (tornei().length > 0) {
-        <div class="messaggio">
-          Nessun torneo corrisponde alla ricerca.
-          <button class="btn" (click)="azzeraFiltri()">Azzera filtri</button>
-        </div>
+        <p class="messaggio">Nessun torneo corrisponde alla ricerca.</p>
       } @else {
         <p class="messaggio">{{ messaggioVuoto() }}</p>
       }

@@ -1,6 +1,10 @@
 <div class="sfondo" (click)="chiudi.emit()">
   <div class="popup" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
-    <button class="chiudi" (click)="chiudi.emit()" title="Chiudi">✕</button>
+    @if (!caricamento() || torneo()) {
+      <button class="chiudi" (click)="chiudi.emit()" title="Chiudi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    }
 
     @if (caricamento() && !torneo()) {
       <p class="messaggio">Caricamento…</p>
@@ -64,7 +68,7 @@
               </div>
               <div class="barra"><span [style.width.%]="percentualePosti()"></span></div>
               @if (pieno()) {
-                <small>Completo</small>
+                <small>Al completo</small>
               }
             </div>
 

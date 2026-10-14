@@ -1,0 +1,37 @@
+{
+  "id": 15,
+  "nome": "Overwatch Rising",
+  "descrizione": "Torneo a squadre (5 contro 5) di Overwatch 2. Iscriviti e scala il tabellone!",
+  "urlImmagine": "img/giochi/overwatch-2.webp",
+  "gioco": {
+    "id": 19,
+    "nome": "Overwatch 2",
+    "tipologia": "FPS"
+  },
+  "piattaforme": [
+    {
+      "id": 1,
+      "nome": "PC"
+    },
+    {
+      "id": 2,
+      "nome": "PS5"
+    },
+    {
+      "id": 3,
+      "nome": "Xbox"
+    }
+  ],
+  "giocatoriPerSquadra": 5,
+  "postiMax": 12,
+  "iscritti": 4,
+  "premio": null,
+  "aperturaIscrizioni": "2026-10-12T00:00:00",
+  "chiusuraIscrizioni": "2026-11-08T23:59:00",
+  "stato": "iscrizioni_aperte",
+  "organizzatore": {
+    "id": 1,
+    "nickname": "admin"
+  },
+  "miaIscrizione": null
+}
