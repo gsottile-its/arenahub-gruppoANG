@@ -37,8 +37,33 @@
 }
 
 h1 {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
   font-size: clamp(2.5rem, 7vw, 5rem);
   line-height: 1.05;
+}
+
+/* spade */
+.spada {
+  position: absolute;
+  z-index: -1;
+  top: 0.65em;
+  width: 1.1em;
+  height: 2.1em;
+  fill: none;
+  stroke: var(--accento);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.spada.sx { left: -0.75em; transform: rotate(-42deg); }
+.spada.dx { right: -0.75em; transform: rotate(42deg); }
+
+@media (max-width: 600px) {
+  .spada { display: none; }
 }
 
 /* "torneo" verde con le righe sottili dentro le lettere */
@@ -126,6 +151,9 @@ h1 .verde {
   text-transform: uppercase;
   color: transparent;
   -webkit-text-stroke: 2px rgba(195, 255, 107, 0.6);
+  background-image: repeating-linear-gradient(-45deg, rgba(195, 255, 107, 0.35) 0 1px, transparent 1px 6px);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .numero {

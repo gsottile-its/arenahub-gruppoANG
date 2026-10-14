@@ -31,7 +31,7 @@
 
     @if (auth.utente(); as utente) {
       <div class="profilo">
-        <button class="pulsante-header" (click)="apriChiudiMenu()">Ciao {{ utente.nickname }} <span class="icona-pulsante">👤</span></button>
+        <button class="pulsante-header" (click)="apriChiudiMenu()">Ciao, {{ utente.nickname }}</button>
         @if (menuAperto()) {
           <div class="tendina">
             @if (auth.admin()) {
