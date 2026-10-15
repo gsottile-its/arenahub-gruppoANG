@@ -33,6 +33,11 @@ public class SquadraController {
         return squadraService.mie(utente.id());
     }
 
+    @GetMapping("/{id}")
+    public SquadraResponse dettaglio(@PathVariable Long id, UtenteLoggato utente) {
+        return squadraService.dettaglio(id, utente.id());
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SquadraResponse crea(@Valid @RequestBody SquadraRequest richiesta,

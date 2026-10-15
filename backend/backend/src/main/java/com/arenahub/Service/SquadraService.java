@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -46,6 +47,23 @@ public class SquadraService {
                         m.getRuoloSquadra(),
                         membroRepository.countBySquadraId(m.getSquadra().getId())))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public SquadraResponse dettaglio(Long idSquadra, Long idRichiedente) {
+        Squadra s = squadraRepository.findById(idSquadra)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Squadra non trovata"));
+        if (!membroRepository.existsBySquadraIdAndUtenteId(idSquadra, idRichiedente)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Non fai parte di questa squadra");
+        }
+
+        List<SquadraResponse.Membro> membri = membroRepository.findBySquadraId(idSquadra).stream()
+                .sorted(Comparator.comparing((MembroSquadra m) -> m.getRuoloSquadra() != RuoloSquadra.capo_squadra)
+                        .thenComparing(m -> m.getUtente().getNickname(), String.CASE_INSENSITIVE_ORDER))
+                .map(m -> new SquadraResponse.Membro(
+                        m.getUtente().getId(), m.getUtente().getNickname(), m.getRuoloSquadra()))
+                .toList();
+        return new SquadraResponse(s.getId(), s.getNome(), membri);
     }
 
     public SquadraResponse crea(SquadraRequest r, Long idUtente) {
@@ -103,7 +121,7 @@ public class SquadraService {
         boolean richiedenteCapo = membroRepository.findBySquadraIdAndUtenteId(idSquadra, idRichiedente)
                 .map(m -> m.getRuoloSquadra() == RuoloSquadra.capo_squadra)
                 .orElse(false);
-        if (!idUtente.equals(idRichiedente) && !richiedenteCapo) {
+        if (!richiedenteCapo) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Solo il capo squadra può rimuovere i membri");
         }
 
@@ -113,8 +131,7 @@ public class SquadraService {
                         "Il capo squadra non può uscire finché ci sono altri membri");
             }
 
-            // Nel DB iscrizione.fk_squadra ha "on delete cascade": se cancellassimo la squadra
-            // sparirebbero anche le sue iscrizioni, quindi lo blocchiamo prima.
+
             if (iscrizioneRepository.existsBySquadraIdAndStatoNot(idSquadra, IscrizioneStato.ritirata)) {
                 throw new ApiException(HttpStatus.CONFLICT, "La squadra è iscritta a dei tornei");
             }
