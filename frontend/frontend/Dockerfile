@@ -1,22 +1,16 @@
-# ---------- 1) compilazione con Maven ----------
-FROM maven:3.9-eclipse-temurin-17 AS build
+# ---------- 1) build di Angular ----------
+FROM node:24-alpine AS build
 WORKDIR /app
 
-# prima solo il pom: le dipendenze restano in cache finché il pom non cambia
-COPY pom.xml .
-RUN mvn -q -B dependency:go-offline
+# prima solo package*.json: npm ci resta in cache finché le dipendenze non cambiano
+COPY package.json package-lock.json ./
+RUN npm ci
 
-COPY src ./src
-RUN mvn -q -B -DskipTests package
+COPY . .
+RUN npx ng build --configuration production
 
-# ---------- 2) immagine finale, solo Java runtime ----------
-FROM eclipse-temurin:17-jre
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
-
-# le date di iscrizione sono in ora italiana: senza questo il container usa UTC
-ENV TZ=Europe/Rome
-
-EXPOSE 8080
-ENTRYPOINT ["java", "-Duser.timezone=Europe/Rome", "-jar", "app.jar"]
+# ---------- 2) nginx serve il sito e inoltra /api al backend ----------
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
+EXPOSE 80
