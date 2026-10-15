@@ -13,14 +13,12 @@ export interface MembroSquadra {
   ruoloSquadra: RuoloSquadra;
 }
 
-// risposta di post /api/squadre
-export interface SquadraCreata {
+export interface SquadraDettaglio {
   id: number;
   nome: string;
   membri: MembroSquadra[];
 }
 
-// risposta di post /api/squadre/{id}/membri
 export interface MembroAggiunto extends MembroSquadra {
   idSquadra: number;
 }

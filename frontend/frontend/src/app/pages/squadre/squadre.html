@@ -29,6 +29,7 @@
       <div class="banner-errore">{{ erroreCaricamento() }}</div>
     } @else {
       @for (s of squadre(); track s.id) {
+        @let capo = s.mioRuolo === 'capo_squadra';
         <article class="squadra" [class.aperta]="aperta() === s.id">
           <button type="button" class="squadra-testa" (click)="apriChiudi(s.id)">
             <span class="iniziale">{{ s.nome.charAt(0) }}</span>
@@ -41,7 +42,35 @@
 
           @if (aperta() === s.id) {
             <div class="squadra-corpo">
-              @if (s.mioRuolo === 'capo_squadra') {
+              <h4 class="titoletto">Giocatori</h4>
+
+              @if (caricamentoMembri()) {
+                <p class="nota">Caricamento giocatori…</p>
+              } @else if (erroreMembri()) {
+                <p class="nota errore">{{ erroreMembri() }}</p>
+              } @else {
+                <ul class="membri">
+                  @for (m of elenco(s.id); track m.idUtente) {
+                    @let chiave = 'membro-' + s.id + '-' + m.idUtente;
+                    <li>
+                      <span class="avatar-membro">{{ m.nickname.charAt(0) }}</span>
+                      <span class="nick">
+                        {{ m.nickname }}
+                        @if (m.idUtente === idMio()) { <em>(tu)</em> }
+                      </span>
+                      <span class="ruolo" [class.capo]="m.ruoloSquadra === 'capo_squadra'">{{ ruoli[m.ruoloSquadra] }}</span>
+                      @if (capo && m.ruoloSquadra !== 'capo_squadra') {
+                        <button type="button" class="btn-pericolo piccolo" [class.conferma]="conferma() === chiave" (click)="rimuovi(s, m)">
+                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+                          {{ conferma() === chiave ? 'Confermi?' : 'Elimina membro' }}
+                        </button>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (capo) {
                 <form class="aggiungi" (ngSubmit)="aggiungi(s)" novalidate>
                   <input name="nickname" placeholder="Nickname del giocatore" [(ngModel)]="nickname" />
                   <select name="ruolo" [(ngModel)]="ruolo">
@@ -50,34 +79,22 @@
                   </select>
                   <button type="submit" class="btn btn-verde" [disabled]="invio()">Aggiungi</button>
                 </form>
+              }
 
-                @let noti = membriNoti()[s.id] ?? [];
-                @if (noti.length > 0) {
-                  <ul class="membri">
-                    @for (m of noti; track m.idUtente) {
-                      <li>
-                        <span>{{ m.nickname }}</span>
-                        <span class="ruolo">{{ ruoli[m.ruoloSquadra] }}</span>
-                        @if (m.ruoloSquadra !== 'capo_squadra') {
-                          <button type="button" class="rimuovi" (click)="rimuovi(s, m)">Rimuovi</button>
-                        }
-                      </li>
-                    }
-                  </ul>
+              <div class="zona-pericolo">
+                @if (capo) {
+                  <button type="button" class="btn-pericolo" [class.conferma]="conferma() === 'elimina-' + s.id"
+                          [disabled]="eliminazione()" (click)="eliminaSquadra(s)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+                    {{ eliminazione() ? 'Eliminazione…' : conferma() === 'elimina-' + s.id ? 'Confermi l\'eliminazione?' : 'Elimina squadra' }}
+                  </button>
+                } @else {
+                  <button type="button" class="btn-pericolo" [class.conferma]="conferma() === 'esci-' + s.id" (click)="esci(s)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" /></svg>
+                    {{ conferma() === 'esci-' + s.id ? 'Confermi?' : 'Esci dalla squadra' }}
+                  </button>
                 }
-              } @else {
-                <p class="nota">Solo il capo squadra può aggiungere o rimuovere i membri.</p>
-              }
-
-              @if (s.mioRuolo !== 'capo_squadra' || s.membri === 1) {
-                <button type="button" class="esci" (click)="esci(s)">
-                  @if (conferma() === s.id) {
-                    Sicuro? Clicca di nuovo per confermare
-                  } @else {
-                    {{ s.mioRuolo === 'capo_squadra' ? 'Elimina squadra' : 'Esci dalla squadra' }}
-                  }
-                </button>
-              }
+              </div>
             </div>
           }
         </article>

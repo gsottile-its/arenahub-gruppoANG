@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { concat, toArray } from 'rxjs';
 import { MembroSquadra, MiaSquadra, RuoloSquadra } from '../../models/squadra';
 import { AuthService } from '../../services/auth';
 import { SquadreService } from '../../services/squadre';
@@ -10,6 +11,8 @@ const NOMI_RUOLI: Record<RuoloSquadra, string> = {
   giocatore: 'Giocatore',
   riserva: 'Riserva'
 };
+
+const ORDINE_RUOLI: Record<RuoloSquadra, number> = { capo_squadra: 0, giocatore: 1, riserva: 2 };
 
 @Component({
   selector: 'app-squadre',
@@ -23,6 +26,7 @@ export class Squadre {
   private toast = inject(ToastService);
 
   readonly ruoli = NOMI_RUOLI;
+  readonly idMio = computed(() => this.auth.utente()?.id ?? null);
 
   squadre = signal<MiaSquadra[]>([]);
   caricamento = signal(true);
@@ -34,13 +38,16 @@ export class Squadre {
   erroreCrea = signal<string | null>(null);
 
   aperta = signal<number | null>(null);
+  membri = signal<Record<number, MembroSquadra[]>>({});
+  caricamentoMembri = signal(false);
+  erroreMembri = signal<string | null>(null);
+
   nickname = '';
   ruolo: RuoloSquadra = 'giocatore';
   invio = signal(false);
-  conferma = signal<number | null>(null);
-
-  // l'api non ha un elenco dei membri, teniamo quelli che arrivano dalle risposte
-  membriNoti = signal<Record<number, MembroSquadra[]>>({});
+  eliminazione = signal(false);
+  conferma = signal<string | null>(null);
+  private timerConferma?: ReturnType<typeof setTimeout>;
 
   constructor() {
     this.carica();
@@ -59,6 +66,25 @@ export class Squadre {
     });
   }
 
+  caricaMembri(id: number) {
+    this.caricamentoMembri.set(true);
+    this.erroreMembri.set(null);
+    this.squadreService.getSquadra(id).subscribe({
+      next: squadra => {
+        this.membri.update(m => ({ ...m, [id]: squadra.membri }));
+        this.caricamentoMembri.set(false);
+      },
+      error: err => {
+        this.erroreMembri.set(err.error?.errore ?? 'Impossibile caricare i giocatori');
+        this.caricamentoMembri.set(false);
+      }
+    });
+  }
+
+  elenco(id: number) {
+    return [...(this.membri()[id] ?? [])].sort((a, b) => ORDINE_RUOLI[a.ruoloSquadra] - ORDINE_RUOLI[b.ruoloSquadra]);
+  }
+
   erroreNome() {
     const nome = this.nome.trim();
     if (nome === '') return 'Il nome è obbligatorio';
@@ -74,11 +100,12 @@ export class Squadre {
     this.creazione.set(true);
     this.squadreService.crea(this.nome.trim()).subscribe({
       next: squadra => {
-        this.membriNoti.update(m => ({ ...m, [squadra.id]: squadra.membri }));
+        this.membri.update(m => ({ ...m, [squadra.id]: squadra.membri }));
         this.nome = '';
         this.inviato.set(false);
         this.creazione.set(false);
         this.aperta.set(squadra.id);
+        this.erroreMembri.set(null);
         this.toast.mostra(`Squadra ${squadra.nome} creata!`, 'verde');
         this.carica();
       },
@@ -90,10 +117,12 @@ export class Squadre {
   }
 
   apriChiudi(id: number) {
-    this.aperta.update(a => (a === id ? null : id));
+    const apri = this.aperta() !== id;
+    this.aperta.set(apri ? id : null);
     this.nickname = '';
     this.ruolo = 'giocatore';
     this.conferma.set(null);
+    if (apri) this.caricaMembri(id);
   }
 
   aggiungi(squadra: MiaSquadra) {
@@ -106,7 +135,8 @@ export class Squadre {
     this.invio.set(true);
     this.squadreService.aggiungiMembro(squadra.id, nickname, this.ruolo).subscribe({
       next: membro => {
-        this.membriNoti.update(m => ({ ...m, [squadra.id]: [...(m[squadra.id] ?? []), membro] }));
+        const nuovo: MembroSquadra = { idUtente: membro.idUtente, nickname: membro.nickname, ruoloSquadra: membro.ruoloSquadra };
+        this.membri.update(m => ({ ...m, [squadra.id]: [...(m[squadra.id] ?? []), nuovo] }));
         this.nickname = '';
         this.invio.set(false);
         this.toast.mostra(`${membro.nickname} aggiunto alla squadra`, 'verde');
@@ -119,10 +149,23 @@ export class Squadre {
     });
   }
 
+  private confermato(chiave: string) {
+    clearTimeout(this.timerConferma);
+    if (this.conferma() === chiave) {
+      this.conferma.set(null);
+      return true;
+    }
+    this.conferma.set(chiave);
+    this.timerConferma = setTimeout(() => this.conferma.set(null), 3000);
+    return false;
+  }
+
   rimuovi(squadra: MiaSquadra, membro: MembroSquadra) {
+    if (!this.confermato(`membro-${squadra.id}-${membro.idUtente}`)) return;
+
     this.squadreService.rimuoviMembro(squadra.id, membro.idUtente).subscribe({
       next: () => {
-        this.membriNoti.update(m => ({ ...m, [squadra.id]: (m[squadra.id] ?? []).filter(x => x.idUtente !== membro.idUtente) }));
+        this.membri.update(m => ({ ...m, [squadra.id]: (m[squadra.id] ?? []).filter(x => x.idUtente !== membro.idUtente) }));
         this.toast.mostra(`${membro.nickname} rimosso dalla squadra`, 'verde');
         this.carica();
       },
@@ -130,27 +173,43 @@ export class Squadre {
     });
   }
 
-  // esce dalla squadra; se è il capo rimasto da solo la squadra viene eliminata
   esci(squadra: MiaSquadra) {
-    const io = this.auth.utente();
-    if (!io) return;
+    const io = this.idMio();
+    if (io === null || !this.confermato(`esci-${squadra.id}`)) return;
 
-    if (this.conferma() !== squadra.id) {
-      this.conferma.set(squadra.id);
-      return;
-    }
-
-    const elimina = squadra.mioRuolo === 'capo_squadra';
-    this.squadreService.rimuoviMembro(squadra.id, io.id).subscribe({
+    this.squadreService.rimuoviMembro(squadra.id, io).subscribe({
       next: () => {
-        this.conferma.set(null);
         this.aperta.set(null);
-        this.toast.mostra(elimina ? `Squadra ${squadra.nome} eliminata` : `Sei uscito da ${squadra.nome}`, 'verde');
+        this.toast.mostra(`Sei uscito da ${squadra.nome}`, 'verde');
+        this.carica();
+      },
+      error: err => this.toast.mostra(err.error?.errore ?? 'Operazione non riuscita', 'rosso')
+    });
+  }
+
+  eliminaSquadra(squadra: MiaSquadra) {
+    const io = this.idMio();
+    if (io === null || !this.confermato(`elimina-${squadra.id}`)) return;
+
+    const altri = (this.membri()[squadra.id] ?? []).filter(m => m.idUtente !== io);
+    const chiamate = [
+      ...altri.map(m => this.squadreService.rimuoviMembro(squadra.id, m.idUtente)),
+      this.squadreService.rimuoviMembro(squadra.id, io)
+    ];
+
+    this.eliminazione.set(true);
+    concat(...chiamate).pipe(toArray()).subscribe({
+      next: () => {
+        this.eliminazione.set(false);
+        this.aperta.set(null);
+        this.toast.mostra(`Squadra ${squadra.nome} eliminata`, 'verde');
         this.carica();
       },
       error: err => {
-        this.conferma.set(null);
-        this.toast.mostra(err.error?.errore ?? 'Operazione non riuscita', 'rosso');
+        this.eliminazione.set(false);
+        this.toast.mostra(err.error?.errore ?? 'Eliminazione non riuscita', 'rosso');
+        this.caricaMembri(squadra.id);
+        this.carica();
       }
     });
   }
