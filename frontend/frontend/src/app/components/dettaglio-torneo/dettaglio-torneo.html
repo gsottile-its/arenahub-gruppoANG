@@ -132,6 +132,13 @@
           </aside>
         </div>
 
+        @if (t.stato === 'iscrizioni_chiuse' || t.stato === 'in_corso' || t.stato === 'concluso') {
+          <section class="sezione-tabellone" [hidden]="!tabellonePresente()">
+            <h3>Tabellone</h3>
+            <app-tabellone [idTorneo]="t.id" (caricato)="tabellonePresente.set($event)" />
+          </section>
+        }
+
         @if (consigliati().length > 0) {
           <section class="consigliati">
             <h3>Potrebbero interessarti</h3>
@@ -157,7 +164,6 @@
   </div>
 </div>
 
-<!-- spade che si incrociano dopo un'iscrizione riuscita: il ciclo ricrea il blocco così l'animazione riparte -->
 @for (n of [festa()]; track n) {
   @if (n > 0) {
     <div class="incrocio" aria-hidden="true">

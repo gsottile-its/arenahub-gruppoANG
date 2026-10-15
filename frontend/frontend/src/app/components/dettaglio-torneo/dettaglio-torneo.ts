@@ -9,10 +9,11 @@ import { TorneiService } from '../../services/tornei';
 import { IscrizioniService } from '../../services/iscrizioni';
 import { SquadreService } from '../../services/squadre';
 import { ToastService } from '../../services/toast';
+import { TabelloneTorneo } from '../tabellone/tabellone';
 
 @Component({
   selector: 'app-dettaglio-torneo',
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, TabelloneTorneo],
   templateUrl: './dettaglio-torneo.html',
   styleUrl: './dettaglio-torneo.css',
   host: { '(document:keydown.escape)': 'chiudi.emit()' }
@@ -38,6 +39,7 @@ export class DettaglioTorneo {
   aperti = signal<TorneoCard[]>([]);
   idSquadraScelta: number | null = null;
   inAzione = signal(false);
+  tabellonePresente = signal(false);
   chiediConferma = signal(false);
   festa = signal(0);
 
@@ -80,7 +82,6 @@ export class DettaglioTorneo {
     return testi[this.torneo()?.stato ?? ''] ?? '';
   });
 
-  // consigliati: tornei aperti con lo stesso gioco, piattaforme in comune o stesso formato
   consigliati = computed(() => {
     const t = this.torneo();
     if (!t) return [];
@@ -158,7 +159,6 @@ export class DettaglioTorneo {
     this.router.navigate(['/login'], { queryParams: { ritorno: this.router.url } });
   }
 
-  // post /api/tornei/{id}/iscrizioni
   iscriviti() {
     if (this.aSquadre() && this.idSquadraScelta === null) {
       this.toast.mostra('Scegli la squadra da iscrivere', 'giallo');
@@ -193,7 +193,6 @@ export class DettaglioTorneo {
     });
   }
 
-  // delete /api/iscrizioni/{id}
   confermaDisiscrizione() {
     const mia = this.miaIscrizione();
     if (!mia) return;
