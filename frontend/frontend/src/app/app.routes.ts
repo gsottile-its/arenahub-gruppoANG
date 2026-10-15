@@ -5,6 +5,7 @@ import { Login } from './pages/login/login';
 import { Registrazione } from './pages/registrazione/registrazione';
 import { MieiTornei } from './pages/miei-tornei/miei-tornei';
 import { Profilo } from './pages/profilo/profilo';
+import { Squadre } from './pages/squadre/squadre';
 import { NonTrovata } from './pages/non-trovata/non-trovata';
 import { PannelloAdmin } from './pages/admin/pannello/pannello';
 import { GestioneTornei } from './pages/admin/gestione-tornei/gestione-tornei';
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'registrazione', component: Registrazione },
   { path: 'miei-tornei', component: MieiTornei, canActivate: [loginRichiesto] },
   { path: 'profilo', component: Profilo, canActivate: [loginRichiesto] },
+  { path: 'squadre', component: Squadre, canActivate: [loginRichiesto] },
   { path: 'admin', component: PannelloAdmin, canActivate: [adminRichiesto] },
   { path: 'admin/tornei', component: GestioneTornei, canActivate: [adminRichiesto] },
   { path: 'admin/tornei/nuovo', component: FormTorneo, canActivate: [adminRichiesto] },

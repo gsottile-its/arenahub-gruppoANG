@@ -1,0 +1,89 @@
+<section class="squadre-pagina">
+  <form class="crea-squadra" (ngSubmit)="crea()" novalidate>
+    <span class="occhiello">Nuova squadra</span>
+    <h1>Creazione squadre</h1>
+    <p class="sotto-titolo">Scegli un nome: diventerai il capo squadra e potrai aggiungere i tuoi compagni.</p>
+
+    @if (erroreCrea()) {
+      <div class="banner-errore">{{ erroreCrea() }}</div>
+    }
+
+    <div class="campo">
+      <label for="nome">Nome squadra</label>
+      <input id="nome" name="nome" maxlength="50" placeholder="Es. Team Alpha"
+             [(ngModel)]="nome" [class.sbagliato]="inviato() && erroreNome()" />
+      @if (inviato() && erroreNome(); as errore) { <span class="aiuto">{{ errore }}</span> }
+    </div>
+
+    <button type="submit" class="btn btn-verde" [disabled]="creazione()">
+      {{ creazione() ? 'Creazione…' : 'Crea squadra' }}
+    </button>
+  </form>
+
+  <div class="elenco-squadre">
+    <h3 class="sezione">Le mie squadre</h3>
+
+    @if (caricamento()) {
+      <p class="nota">Caricamento…</p>
+    } @else if (erroreCaricamento()) {
+      <div class="banner-errore">{{ erroreCaricamento() }}</div>
+    } @else {
+      @for (s of squadre(); track s.id) {
+        <article class="squadra" [class.aperta]="aperta() === s.id">
+          <button type="button" class="squadra-testa" (click)="apriChiudi(s.id)">
+            <span class="iniziale">{{ s.nome.charAt(0) }}</span>
+            <span class="info">
+              <strong>{{ s.nome }}</strong>
+              <span>{{ ruoli[s.mioRuolo] }} · {{ s.membri }} {{ s.membri === 1 ? 'membro' : 'membri' }}</span>
+            </span>
+            <svg class="freccia" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </button>
+
+          @if (aperta() === s.id) {
+            <div class="squadra-corpo">
+              @if (s.mioRuolo === 'capo_squadra') {
+                <form class="aggiungi" (ngSubmit)="aggiungi(s)" novalidate>
+                  <input name="nickname" placeholder="Nickname del giocatore" [(ngModel)]="nickname" />
+                  <select name="ruolo" [(ngModel)]="ruolo">
+                    <option value="giocatore">Giocatore</option>
+                    <option value="riserva">Riserva</option>
+                  </select>
+                  <button type="submit" class="btn btn-verde" [disabled]="invio()">Aggiungi</button>
+                </form>
+
+                @let noti = membriNoti()[s.id] ?? [];
+                @if (noti.length > 0) {
+                  <ul class="membri">
+                    @for (m of noti; track m.idUtente) {
+                      <li>
+                        <span>{{ m.nickname }}</span>
+                        <span class="ruolo">{{ ruoli[m.ruoloSquadra] }}</span>
+                        @if (m.ruoloSquadra !== 'capo_squadra') {
+                          <button type="button" class="rimuovi" (click)="rimuovi(s, m)">Rimuovi</button>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              } @else {
+                <p class="nota">Solo il capo squadra può aggiungere o rimuovere i membri.</p>
+              }
+
+              @if (s.mioRuolo !== 'capo_squadra' || s.membri === 1) {
+                <button type="button" class="esci" (click)="esci(s)">
+                  @if (conferma() === s.id) {
+                    Sicuro? Clicca di nuovo per confermare
+                  } @else {
+                    {{ s.mioRuolo === 'capo_squadra' ? 'Elimina squadra' : 'Esci dalla squadra' }}
+                  }
+                </button>
+              }
+            </div>
+          }
+        </article>
+      } @empty {
+        <p class="nota">Non fai ancora parte di nessuna squadra.</p>
+      }
+    }
+  </div>
+</section>

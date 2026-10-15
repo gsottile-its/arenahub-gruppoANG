@@ -6,3 +6,21 @@ export interface MiaSquadra {
   mioRuolo: RuoloSquadra;
   membri: number;
 }
+
+export interface MembroSquadra {
+  idUtente: number;
+  nickname: string;
+  ruoloSquadra: RuoloSquadra;
+}
+
+// risposta di post /api/squadre
+export interface SquadraCreata {
+  id: number;
+  nome: string;
+  membri: MembroSquadra[];
+}
+
+// risposta di post /api/squadre/{id}/membri
+export interface MembroAggiunto extends MembroSquadra {
+  idSquadra: number;
+}

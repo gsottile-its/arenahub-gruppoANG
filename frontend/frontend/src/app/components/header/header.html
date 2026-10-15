@@ -51,6 +51,12 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
               Modifica profilo
             </a>
+            @if (!auth.admin()) {
+              <a routerLink="/squadre" (click)="menuAperto.set(false)">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2.2.6 3.5 2.6 3.5 5.5" /></svg>
+                Creazione squadre
+              </a>
+            }
             <button class="esci" (click)="logout()">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" /></svg>
               Logout
