@@ -132,10 +132,11 @@
           </aside>
         </div>
 
-        @if (t.stato === 'in_corso' || t.stato === 'concluso') {
-          <section class="sezione-tabellone">
+        <!-- tabellone in sola lettura: compare appena l'admin lo genera (iscrizioni chiuse in poi) -->
+        @if (t.stato === 'iscrizioni_chiuse' || t.stato === 'in_corso' || t.stato === 'concluso') {
+          <section class="sezione-tabellone" [hidden]="!tabellonePresente()">
             <h3>Tabellone</h3>
-            <app-tabellone [idTorneo]="t.id" />
+            <app-tabellone [idTorneo]="t.id" (caricato)="tabellonePresente.set($event)" />
           </section>
         }
 

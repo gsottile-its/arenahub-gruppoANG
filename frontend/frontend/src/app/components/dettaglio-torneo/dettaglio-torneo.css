@@ -198,8 +198,8 @@
 .nota { color: var(--testo-tenue); }
 .nota.avviso { color: #ffd23f; }
 
-.sezione-tabellone { --card: #1c1c1c; padding: 0 28px 28px; }
-.sezione-tabellone h3 { margin: 0 0 14px; font-size: 1.3rem; }
+.sezione-tabellone { padding: 0 28px 28px; min-width: 0; }
+.sezione-tabellone h3 { margin: 0 0 12px; font-size: 1.3rem; }
 
 .consigliati { padding: 0 28px 28px; }
 .consigliati h3 { margin: 0 0 12px; font-size: 1.3rem; }

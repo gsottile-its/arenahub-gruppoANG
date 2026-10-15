@@ -39,6 +39,7 @@ export class DettaglioTorneo {
   aperti = signal<TorneoCard[]>([]);
   idSquadraScelta: number | null = null;
   inAzione = signal(false);
+  tabellonePresente = signal(false);
   chiediConferma = signal(false);
   festa = signal(0);
 
