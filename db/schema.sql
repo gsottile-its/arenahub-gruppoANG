@@ -12,7 +12,7 @@ drop table if exists configurazione     cascade;
 
 drop function if exists trg_limite_creatore() cascade;
 drop function if exists trg_limite_membri()   cascade;
-drop function if exists trg_limite_tornei()   cascade;
+drop function if exists trg_limite_iscrizioni() cascade;
 
 drop type if exists stato_torneo     cascade;
 drop type if exists stato_iscrizione cascade;
@@ -192,29 +192,40 @@ create trigger before_insert_membro
     for each row execute function trg_limite_membri();
 
 
-create function trg_limite_tornei() returns trigger
+create function trg_limite_iscrizioni() returns trigger
 language plpgsql
 set search_path = ''
 as $$
 declare
     lim integer;
 begin
+    if new.fk_utente is null or new.stato = 'ritirata' then
+        return new;
+    end if;
+
+    if tg_op = 'UPDATE' and old.stato <> 'ritirata' then
+        return new;
+    end if;
+
     select valore::integer into lim
     from public.configurazione
     where chiave = 'max_tornei_per_utente';
 
     if lim is not null
-       and (select count(*) from public.torneo
-            where fk_organizzatore = new.fk_organizzatore
-              and stato not in ('concluso', 'annullato')) >= lim then
-        raise exception 'Hai raggiunto il limite di % tornei', lim;
+       and (select count(*)
+            from public.iscrizione i
+            join public.torneo t on t.id_torneo = i.fk_torneo
+            where i.fk_utente = new.fk_utente
+              and i.stato <> 'ritirata'
+              and t.stato not in ('concluso', 'annullato')) >= lim then
+        raise exception 'Puoi iscriverti a un massimo di % tornei', lim;
     end if;
     return new;
 end $$;
 
-create trigger before_insert_torneo
-    before insert on torneo
-    for each row execute function trg_limite_tornei();
+create trigger before_insert_iscrizione
+    before insert or update of stato on iscrizione
+    for each row execute function trg_limite_iscrizioni();
 
 
 alter table configurazione     enable row level security;
