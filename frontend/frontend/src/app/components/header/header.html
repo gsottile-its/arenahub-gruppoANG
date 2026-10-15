@@ -2,33 +2,19 @@
   <a routerLink="/" class="logo">Arena<span>Hub</span></a>
 
   <nav class="menu">
-    <a routerLink="/" routerLinkActive="attivo" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-    <a routerLink="/tornei" routerLinkActive="attivo">Tornei</a>
-    @if (auth.loggato() && !auth.admin()) {
-      <a routerLink="/miei-tornei" routerLinkActive="attivo">Miei tornei</a>
-    }
     @if (auth.admin()) {
-      <a routerLink="/admin" routerLinkActive="attivo" class="voce-admin">Admin</a>
+      <a routerLink="/admin" routerLinkActive="attivo" [routerLinkActiveOptions]="{ exact: true }" class="voce-admin">Admin</a>
+      <a routerLink="/admin/tornei" routerLinkActive="attivo">Tornei</a>
+    } @else {
+      <a routerLink="/" routerLinkActive="attivo" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/tornei" routerLinkActive="attivo">Tornei</a>
+      @if (auth.loggato()) {
+        <a routerLink="/miei-tornei" routerLinkActive="attivo">Miei tornei</a>
+      }
     }
   </nav>
 
   <div class="destra">
-    <!-- notifiche e lingua: per ora solo grafica -->
-    @if (auth.loggato() && !auth.admin()) {
-      <button class="icona" title="Notifiche">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z" />
-          <path d="M10 20a2 2 0 0 0 4 0" />
-        </svg>
-      </button>
-    }
-    <button class="icona" title="Cambia lingua">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3Z" />
-      </svg>
-    </button>
-
     @if (auth.utente(); as utente) {
       <div class="profilo">
         <button class="pulsante-header" (click)="apriChiudiMenu()">Ciao, {{ utente.nickname }}</button>

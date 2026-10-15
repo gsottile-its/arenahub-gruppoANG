@@ -9,10 +9,11 @@ import { TorneiService } from '../../services/tornei';
 import { IscrizioniService } from '../../services/iscrizioni';
 import { SquadreService } from '../../services/squadre';
 import { ToastService } from '../../services/toast';
+import { TabelloneTorneo } from '../tabellone/tabellone';
 
 @Component({
   selector: 'app-dettaglio-torneo',
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, TabelloneTorneo],
   templateUrl: './dettaglio-torneo.html',
   styleUrl: './dettaglio-torneo.css',
   host: { '(document:keydown.escape)': 'chiudi.emit()' }

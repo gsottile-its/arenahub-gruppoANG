@@ -9,6 +9,16 @@ export const TESTI_STATO_TORNEO: Record<StatoTorneo, string> = {
   annullato: 'Cancellato'
 };
 
+export const elencoAdmin = {
+  pagina: 1,
+  stato: null as StatoTorneo | null,
+  ricerca: '',
+  idTipologia: null as number | null,
+  nomeGioco: null as string | null,
+  nomePiattaforma: null as string | null,
+  formato: null as number | null
+};
+
 export const TESTI_STATO_ISCRIZIONE: Record<StatoIscrizione, string> = {
   lista_attesa: "Lista d'attesa",
   in_attesa: 'Da confermare',

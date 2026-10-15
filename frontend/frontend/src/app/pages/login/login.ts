@@ -49,7 +49,9 @@ export class Login {
         this.toast.mostra(`Bentornato/a, ${risposta.utente.nickname}!`, 'verde');
 
         const ritorno = this.ritorno ?? '';
-        const destinazione = ritorno.startsWith('/') ? ritorno : '/';
+        const admin = risposta.utente.ruolo === 'admin';
+        let destinazione = ritorno.startsWith('/') ? ritorno : '/';
+        if (admin && !destinazione.startsWith('/admin')) destinazione = '/admin';
         this.router.navigateByUrl(destinazione);
       },
       error: err => {

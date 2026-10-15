@@ -5,6 +5,66 @@
   <a routerLink="/admin/tornei/nuovo" class="btn btn-verde">+ Crea torneo</a>
 </div>
 
+<div class="barra-strumenti">
+  <label class="cerca">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+    <input type="search" placeholder="Cerca un torneo o un gioco…" [ngModel]="ricerca()" (ngModelChange)="ricerca.set($event); ricorda()" />
+  </label>
+
+  <button class="pulsante-filtri" [class.aperto]="pannelloFiltri()" (click)="pannelloFiltri.set(!pannelloFiltri())">
+    <span class="etichetta">
+      Filtri
+      @if (filtriAttivi() > 0) {
+        <span class="conteggio">{{ filtriAttivi() }}</span>
+      }
+    </span>
+  </button>
+</div>
+
+@if (pannelloFiltri()) {
+  <div class="pannello-filtri">
+    <label class="tendina" [class.attiva]="idTipologia() !== null">
+      <span>Categoria</span>
+      <select [ngModel]="idTipologia()" (ngModelChange)="scegliTipologia($event)">
+        <option [ngValue]="null">Tutte</option>
+        @for (t of tipologie(); track t.id) {
+          <option [ngValue]="t.id">{{ t.nome }}</option>
+        }
+      </select>
+    </label>
+    <label class="tendina" [class.attiva]="nomeGioco() !== null">
+      <span>Gioco</span>
+      <select [ngModel]="nomeGioco()" (ngModelChange)="nomeGioco.set($event); ricorda()">
+        <option [ngValue]="null">Tutti</option>
+        @for (g of giochiDellaCategoria(); track g.id) {
+          <option [ngValue]="g.nome">{{ g.nome }}</option>
+        }
+      </select>
+    </label>
+    <label class="tendina" [class.attiva]="nomePiattaforma() !== null">
+      <span>Piattaforma</span>
+      <select [ngModel]="nomePiattaforma()" (ngModelChange)="nomePiattaforma.set($event); ricorda()">
+        <option [ngValue]="null">Tutte</option>
+        @for (p of piattaforme(); track p.id) {
+          <option [ngValue]="p.nome">{{ p.nome }}</option>
+        }
+      </select>
+    </label>
+    <label class="tendina" [class.attiva]="formato() !== null">
+      <span>Squadre</span>
+      <select [ngModel]="formato()" (ngModelChange)="formato.set($event); ricorda()">
+        <option [ngValue]="null">Tutte</option>
+        @for (f of formati; track f) {
+          <option [ngValue]="f">{{ f === 1 ? '1 vs 1' : f === 5 ? '5 vs 5 o più' : f + ' vs ' + f }}</option>
+        }
+      </select>
+    </label>
+    @if (filtriAttivi() > 0) {
+      <button class="azzera" (click)="azzeraFiltri()">✕ Azzera</button>
+    }
+  </div>
+}
+
 <div class="filtri">
   @for (f of filtriStato; track f.testo) {
     <button class="filtro" [attr.data-stato]="f.stato ?? 'tutti'" [class.attivo]="filtroStato() === f.stato" (click)="scegliStato(f.stato)">
@@ -21,8 +81,12 @@
     <button class="btn" (click)="carica()">Riprova</button>
   </div>
 } @else {
+  @if ((ricerca() || filtriAttivi() > 0) && pagineTotali() > 1) {
+    <p class="nota-filtri">Ricerca e filtri si applicano ai tornei di questa pagina.</p>
+  }
+
   <div class="elenco">
-    @for (t of tornei(); track t.id) {
+    @for (t of torneiFiltrati(); track t.id) {
       <article class="riga">
         <a [routerLink]="['/admin/tornei', t.id]" class="miniatura">
           @if (t.urlImmagine) {
@@ -42,7 +106,11 @@
         <a [routerLink]="['/admin/tornei', t.id]" class="btn gestisci">Gestisci</a>
       </article>
     } @empty {
-      <p class="messaggio">Nessun torneo in questo stato.</p>
+      @if (tornei().length > 0) {
+        <p class="messaggio">Nessun torneo corrisponde alla ricerca.</p>
+      } @else {
+        <p class="messaggio">Nessun torneo in questo stato.</p>
+      }
     }
   </div>
 

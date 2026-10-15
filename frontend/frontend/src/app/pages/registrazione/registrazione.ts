@@ -52,18 +52,30 @@ export class Registrazione {
     this.campoServer.set(null);
     if (!this.valido()) return;
 
+    const email = this.email.trim();
+    const password = this.password;
+
     this.caricamento.set(true);
     this.auth.registrazione({
-      email: this.email.trim(),
+      email,
       nickname: this.nickname.trim(),
       nome: this.nome.trim(),
       cognome: this.cognome.trim(),
-      password: this.password
+      password
     }).subscribe({
       next: () => {
-        this.caricamento.set(false);
-        this.toast.mostra('Account creato! Ora puoi accedere.', 'verde');
-        this.router.navigate(['/login']);
+        this.auth.login(email, password).subscribe({
+          next: risposta => {
+            this.caricamento.set(false);
+            this.toast.mostra(`Benvenuto/a, ${risposta.utente.nickname}!`, 'verde');
+            this.router.navigate(['/']);
+          },
+          error: () => {
+            this.caricamento.set(false);
+            this.toast.mostra('Account creato! Ora puoi accedere.', 'verde');
+            this.router.navigate(['/login']);
+          }
+        });
       },
       error: err => {
 

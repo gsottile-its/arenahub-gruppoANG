@@ -17,6 +17,138 @@
 .gestisci { background-image: none; }
 .verde { color: var(--accento); }
 
+.barra-strumenti {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cerca {
+  flex: 0 1 720px;
+  margin-left: 8px;
+  transform: skewX(-12deg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  background-color: var(--card);
+  border: 1px solid #3a3a3a;
+  border-left: 3px solid var(--accento);
+}
+
+.cerca:focus-within { border-color: var(--accento); }
+.cerca svg,
+.cerca input { transform: skewX(12deg); }
+.cerca svg { width: 18px; height: 18px; fill: none; stroke: var(--testo-tenue); stroke-width: 2; }
+
+.cerca input {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  color: var(--testo);
+  font: inherit;
+  outline: none;
+}
+
+.pulsante-filtri {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 28px;
+  border: none;
+  background-color: #2c2c2c;
+  background-image: var(--texture-chiara);
+  margin-right: 8px;
+  transform: skewX(-12deg);
+  color: var(--testo);
+  font-family: var(--font-titoli);
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.pulsante-filtri .etichetta { display: inline-flex; align-items: center; gap: 8px; transform: skewX(12deg); }
+.pulsante-filtri:hover,
+.pulsante-filtri.aperto { color: var(--accento); background-color: #333; }
+
+.conteggio {
+  min-width: 20px;
+  padding: 1px 6px;
+  background: var(--accento);
+  color: #111;
+  font-size: 0.8rem;
+}
+
+.pannello-filtri {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 28px;
+  margin: 4px 0 18px 8px;
+  animation: scendi 0.2s ease-out;
+}
+
+@keyframes scendi { from { opacity: 0; transform: translateY(-6px); } }
+
+.tendina {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #3a3a3a;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.tendina:hover { border-bottom-color: #6a6a6a; }
+
+.tendina span {
+  font-family: var(--font-titoli);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--testo-tenue);
+  transition: color 0.2s;
+}
+
+.tendina select {
+  appearance: none;
+  min-width: 96px;
+  padding: 0 22px 0 0;
+  border: none;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c3ff6b' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right center / 12px;
+  color: var(--testo);
+  font-family: var(--font-testo);
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.tendina select option { background: #1c1c1c; color: var(--testo); }
+
+.tendina.attiva { border-bottom-color: var(--accento); }
+.tendina.attiva span { color: var(--accento); }
+.tendina:focus-within { border-bottom-color: var(--accento); }
+
+.azzera {
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: var(--testo-tenue);
+  font-family: var(--font-titoli);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.azzera:hover { color: var(--accento); }
+
+.nota-filtri { color: var(--testo-tenue); margin: 0 0 16px; }
+
 /* stessi filtri inclinati della pagina tornei */
 .filtri { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 28px 8px; }
 

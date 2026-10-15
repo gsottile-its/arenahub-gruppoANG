@@ -8,9 +8,9 @@ import { AdminService, STATI_MODIFICABILI } from '../../../services/admin';
 import { CataloghiService } from '../../../services/cataloghi';
 import { TorneiService } from '../../../services/tornei';
 import { ToastService } from '../../../services/toast';
-import { TESTI_STATO_TORNEO, daCampoData, perCampoData } from '../comune';
+import { TESTI_STATO_TORNEO, daCampoData, elencoAdmin, perCampoData } from '../comune';
 
-type Errori = Partial<Record<'nome' | 'gioco' | 'piattaforme' | 'apertura' | 'chiusura' | 'giocatori' | 'posti', string>>;
+type Errori = Partial<Record<'nome' | 'gioco' | 'piattaforme' | 'apertura' | 'chiusura' | 'giocatori' | 'posti' | 'premio', string>>;
 
 // stesso form per creazione (post /api/tornei) e modifica (put /api/tornei/{id})
 @Component({
@@ -45,9 +45,11 @@ export class FormTorneo implements OnInit {
   idTipologia: number | null = null;
   idGioco: number | null = null;
   idPiattaforme: number[] = [];
-  premio = '';
-  apertura = '';
-  chiusura = '';
+  premio: number | null = null;
+  aperturaData = '';
+  aperturaOra = '00:00';
+  chiusuraData = '';
+  chiusuraOra = '23:59';
   giocatoriPerSquadra: number | null = 1;
   postiMax: number | null = 16;
   descrizione = '';
@@ -55,6 +57,26 @@ export class FormTorneo implements OnInit {
   file: File | null = null;
   anteprima = signal<string | null>(null);
   erroreFile = signal<string | null>(null);
+
+  get apertura(): string {
+    return this.aperturaData ? `${this.aperturaData}T${this.aperturaOra || '00:00'}` : '';
+  }
+
+  get chiusura(): string {
+    return this.chiusuraData ? `${this.chiusuraData}T${this.chiusuraOra || '23:59'}` : '';
+  }
+
+  durata(): string | null {
+    if (!this.apertura || !this.chiusura || this.apertura >= this.chiusura) return null;
+    const ore = Math.round((new Date(this.chiusura).getTime() - new Date(this.apertura).getTime()) / 3600000);
+    if (ore < 24) return `Iscrizioni aperte per ${ore} ${ore === 1 ? 'ora' : 'ore'}`;
+    const giorni = Math.round(ore / 24);
+    return `Iscrizioni aperte per ${giorni} ${giorni === 1 ? 'giorno' : 'giorni'}`;
+  }
+
+  soloCifre(evento: KeyboardEvent) {
+    if (['e', 'E', '+', '-', '.', ','].includes(evento.key)) evento.preventDefault();
+  }
 
   ngOnInit() {
     const torneo$: Observable<TorneoDettaglio | null> = this.idTorneo ? this.torneiService.getTorneo(this.idTorneo) : of(null);
@@ -130,6 +152,7 @@ export class FormTorneo implements OnInit {
     if (!this.chiusura) e.chiusura = 'Data obbligatoria';
     else if (this.apertura && this.apertura >= this.chiusura) e.chiusura = "Deve essere dopo l'apertura";
     if (!Number.isInteger(this.giocatoriPerSquadra) || (this.giocatoriPerSquadra ?? 0) < 1) e.giocatori = 'Almeno 1';
+    if (this.premio !== null && (!Number.isInteger(this.premio) || this.premio < 0)) e.premio = 'Solo numeri interi, zero o più';
     const minimo = Math.max(2, this.originale()?.iscritti ?? 0);
     if (!Number.isInteger(this.postiMax) || (this.postiMax ?? 0) < minimo) e.posti = `Almeno ${minimo}`;
     return e;
@@ -148,7 +171,7 @@ export class FormTorneo implements OnInit {
       nome: this.nome.trim(),
       idGioco: this.idGioco!,
       idPiattaforme: [...this.idPiattaforme].sort((a, b) => a - b),
-      premio: this.premio.trim() || null,
+      premio: this.premio === null ? null : `${this.premio} €`,
       aperturaIscrizioni: daCampoData(this.apertura),
       chiusuraIscrizioni: daCampoData(this.chiusura),
       giocatoriPerSquadra: Number(this.giocatoriPerSquadra),
@@ -167,6 +190,7 @@ export class FormTorneo implements OnInit {
     ).subscribe({
       next: creato => {
         this.toast.mostra(`Torneo "${creato.nome}" creato in bozza`, 'verde');
+        elencoAdmin.pagina = 1;
         this.router.navigate(['/admin/tornei']);
       },
       error: err => this.errore(err)
@@ -226,9 +250,10 @@ export class FormTorneo implements OnInit {
     this.idGioco = t.gioco.id;
     this.idTipologia = this.giochi().find(g => g.id === t.gioco.id)?.tipologia.id ?? null;
     this.idPiattaforme = t.piattaforme.map(p => p.id);
-    this.premio = t.premio ?? '';
-    this.apertura = perCampoData(t.aperturaIscrizioni);
-    this.chiusura = perCampoData(t.chiusuraIscrizioni);
+    const cifre = (t.premio ?? '').replace(/\D/g, '');
+    this.premio = cifre ? Number(cifre) : null;
+    [this.aperturaData, this.aperturaOra] = perCampoData(t.aperturaIscrizioni).split('T');
+    [this.chiusuraData, this.chiusuraOra] = perCampoData(t.chiusuraIscrizioni).split('T');
     this.giocatoriPerSquadra = t.giocatoriPerSquadra;
     this.postiMax = t.postiMax;
     this.descrizione = t.descrizione ?? '';

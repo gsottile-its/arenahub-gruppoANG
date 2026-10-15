@@ -132,6 +132,13 @@
           </aside>
         </div>
 
+        @if (t.stato === 'in_corso' || t.stato === 'concluso') {
+          <section class="sezione-tabellone">
+            <h3>Tabellone</h3>
+            <app-tabellone [idTorneo]="t.id" />
+          </section>
+        }
+
         @if (consigliati().length > 0) {
           <section class="consigliati">
             <h3>Potrebbero interessarti</h3>

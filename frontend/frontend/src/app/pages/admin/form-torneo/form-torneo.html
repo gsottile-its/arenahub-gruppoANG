@@ -82,19 +82,50 @@
       @if (sbagliato('piattaforme')) { <span class="aiuto">{{ e.piattaforme }}</span> }
     </div>
 
-    <div class="griglia-campi">
-      <div class="campo">
-        <label for="apertura">Apertura iscrizioni</label>
-        <input id="apertura" name="apertura" type="datetime-local" [(ngModel)]="apertura" [class.sbagliato]="sbagliato('apertura')" />
-        @if (sbagliato('apertura')) { <span class="aiuto">{{ e.apertura }}</span> }
+    <div class="periodo">
+      <div class="periodo-testa">
+        <span class="etichetta">Periodo delle iscrizioni</span>
+        @if (durata(); as d) { <span class="durata">{{ d }}</span> }
       </div>
 
-      <div class="campo">
-        <label for="chiusura">Chiusura iscrizioni</label>
-        <input id="chiusura" name="chiusura" type="datetime-local" [(ngModel)]="chiusura" [class.sbagliato]="sbagliato('chiusura')" />
-        @if (sbagliato('chiusura')) { <span class="aiuto">{{ e.chiusura }}</span> }
-      </div>
+      <div class="periodo-righe">
+        <div class="momento">
+          <span class="momento-titolo">Apertura</span>
+          <div class="momento-campi" [class.sbagliato]="sbagliato('apertura')">
+            <label class="selettore data">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+              <input name="aperturaData" type="date" aria-label="Data di apertura" [(ngModel)]="aperturaData" />
+            </label>
+            <label class="selettore ora">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+              <input name="aperturaOra" type="time" aria-label="Ora di apertura" [(ngModel)]="aperturaOra" />
+            </label>
+          </div>
+          @if (sbagliato('apertura')) { <span class="aiuto">{{ e.apertura }}</span> }
+        </div>
 
+        <span class="freccia-periodo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 12h15M14 6l6 6-6 6" /></svg>
+        </span>
+
+        <div class="momento">
+          <span class="momento-titolo">Chiusura</span>
+          <div class="momento-campi" [class.sbagliato]="sbagliato('chiusura')">
+            <label class="selettore data">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+              <input name="chiusuraData" type="date" aria-label="Data di chiusura" [(ngModel)]="chiusuraData" [min]="aperturaData" />
+            </label>
+            <label class="selettore ora">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+              <input name="chiusuraOra" type="time" aria-label="Ora di chiusura" [(ngModel)]="chiusuraOra" />
+            </label>
+          </div>
+          @if (sbagliato('chiusura')) { <span class="aiuto">{{ e.chiusura }}</span> }
+        </div>
+      </div>
+    </div>
+
+    <div class="griglia-campi tre">
       <div class="campo">
         <label for="giocatori">Giocatori per squadra</label>
         <input id="giocatori" name="giocatori" type="number" min="1" [(ngModel)]="giocatoriPerSquadra"
@@ -111,7 +142,13 @@
 
       <div class="campo">
         <label for="premio">Montepremi</label>
-        <input id="premio" name="premio" maxlength="50" [(ngModel)]="premio" placeholder="Es. 200 € (facoltativo)" />
+        <div class="con-valuta" [class.sbagliato]="sbagliato('premio')">
+          <input id="premio" name="premio" type="number" min="0" step="1" inputmode="numeric"
+                 [(ngModel)]="premio" placeholder="Es. 200" (keydown)="soloCifre($event)" />
+          <span>€</span>
+        </div>
+        <span class="suggerimento">Facoltativo, solo numeri</span>
+        @if (sbagliato('premio')) { <span class="aiuto">{{ e.premio }}</span> }
       </div>
     </div>
 
