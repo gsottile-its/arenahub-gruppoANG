@@ -7,6 +7,7 @@
 }
 
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 32px;
@@ -39,6 +40,7 @@
 
 .menu {
   display: flex;
+  align-items: center;
   gap: 28px;
 }
 
@@ -55,8 +57,8 @@
 .menu a:hover { color: var(--accento); }
 
 /* voce admin: piccola etichetta che la distingue dalle altre */
-.menu .voce-admin { padding: 2px 8px 4px; background: #2c2c2c; }
-.menu .voce-admin.attivo { background: var(--accento); color: #111; border-bottom-color: transparent; }
+.menu .voce-admin { padding: 0 8px 4px; background: #2c2c2c; box-shadow: 0 -3px 0 #2c2c2c; }
+.menu .voce-admin.attivo { background: var(--accento); color: #111; border-bottom-color: transparent; box-shadow: 0 -3px 0 var(--accento); }
 
 .menu a.attivo {
   color: var(--accento);
@@ -99,27 +101,83 @@
 .tendina {
   position: absolute;
   right: 0;
-  top: calc(100% + 8px);
-  background: var(--card);
+  top: calc(100% + 12px);
   display: flex;
   flex-direction: column;
-  min-width: 180px;
+  min-width: 250px;
+  padding-bottom: 8px;
+  background-color: #1c1c1c;
+  background-image: var(--texture-chiara);
+  border-top: 3px solid var(--accento);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  animation: comparsa 0.18s ease-out;
 }
+
+@keyframes comparsa {
+  from { opacity: 0; transform: translateY(-8px); }
+}
+
+.tendina-testa {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 18px 16px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #2e2e2e;
+}
+
+.tendina-testa .iniziale {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  background: var(--accento);
+  color: #111;
+  font-family: var(--font-titoli);
+  font-size: 1.3rem;
+  text-transform: uppercase;
+}
+
+.tendina-testa strong { display: block; font-family: var(--font-titoli); font-weight: 400; font-size: 1.15rem; text-transform: uppercase; }
+.tendina-testa span { font-size: 0.8rem; color: var(--testo-tenue); }
 
 .tendina a,
 .tendina button {
-  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
   text-align: left;
   text-decoration: none;
   background: none;
   border: none;
   color: var(--testo);
-  font: inherit;
+  font-family: var(--font-titoli);
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.tendina svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.15s;
 }
 
 .tendina a:hover,
-.tendina button:hover { background: #333; color: var(--accento); }
+.tendina button:hover { background-color: #262626; color: var(--accento); box-shadow: inset 3px 0 0 var(--accento); }
+.tendina a:hover svg,
+.tendina button:hover svg { transform: translateX(3px); }
+
+.tendina .esci { margin-top: 6px; border-top: 1px solid #2e2e2e; }
+.tendina .esci:hover { color: #ff6b6b; box-shadow: inset 3px 0 0 #ff6b6b; }
 
 /* login e ciao: sfondo verde inclinato, il testo resta dritto */
 .pulsante-header {
@@ -151,5 +209,25 @@
 
 .pulsante-header:hover::before {
   background-image: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 5px);
+}
+
+/* barra verde che si riempie mentre scorri la pagina */
+@supports (animation-timeline: scroll()) {
+  .header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accento);
+    transform-origin: left;
+    animation: avanzamento linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes avanzamento {
+    from { scale: 0 1; }
+  }
 }
 

@@ -65,3 +65,60 @@ h1 { margin: 6px 0 10px; }
 }
 
 .testo { max-width: 340px; line-height: 1.5; opacity: 0.8; }
+
+h1 { font-size: clamp(3rem, 6vw, 4.6rem); line-height: 1; animation: titolo-entra 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
+.etichetta, .sottotitolo { animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both; }
+.tessera { animation: entra-su 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both; }
+.tessera + .tessera { animation-delay: 0.65s; }
+
+/* la freccia compare al passaggio */
+.tessera::after {
+  content: '→';
+  position: absolute;
+  right: 36px;
+  bottom: 28px;
+  font-size: 2rem;
+  opacity: 0;
+  translate: -16px 0;
+  transition: opacity 0.25s ease, translate 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tessera:hover::after { opacity: 1; translate: 0 0; }
+.tessera:hover .numero { opacity: 0.3; }
+.numero { transition: opacity 0.25s; }
+
+/* riquadro del limite di tornei per utente */
+.limite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  margin: 0 0 28px;
+  padding: 20px 24px;
+  background-color: var(--card);
+  background-image: var(--texture-chiara);
+  border-left: 3px solid var(--accento);
+  animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+.limite-testo { display: flex; flex-direction: column; gap: 4px; margin-right: auto; }
+.limite-titolo { font-family: var(--font-titoli); font-size: 1.3rem; text-transform: uppercase; }
+.limite-nota { color: var(--testo-tenue); font-size: 0.9rem; }
+
+.limite input {
+  width: 90px;
+  padding: 11px 12px;
+  background: #1c1c1c;
+  border: 1px solid #444;
+  color: var(--testo);
+  font-family: var(--font-titoli);
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.limite input:focus { outline: none; border-color: var(--accento); }
+.limite input.sbagliato { border-color: #ff4d4d; }
+.limite .btn { padding: 12px 30px; background-image: none; }
+.limite .btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+.limite-errore { flex-basis: 100%; color: #ff8080; font-size: 0.9rem; }
+

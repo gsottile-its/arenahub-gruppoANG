@@ -1,35 +1,48 @@
-<form class="modulo" (ngSubmit)="accedi()" novalidate>
-  <h1>Accedi ad ArenaHub</h1>
-
-  @if (erroreServer()) {
-    <div class="banner-errore">{{ erroreServer() }}. Riprova.</div>
-  }
-
-  <div class="campo">
-    <label for="email">Email</label>
-    <input id="email" name="email" type="email" placeholder="Inserisci email" autocomplete="email"
-           [(ngModel)]="email" [class.sbagliato]="erroreServer() || (inviato() && !emailValida())" />
-    @if (inviato() && !emailValida()) {
-      <span class="aiuto">Inserisci un'email valida</span>
-    }
+<section class="accesso">
+  <div class="accesso-visuale">
+    <img src="img/home/vinci.webp" alt="" />
+    <span class="accesso-parola">Entra</span>
+    <div class="accesso-claim">
+      <span class="occhiello">Bentornato</span>
+      <h2>La tua arena<br />ti aspetta</h2>
+      <p>Accedi per iscriverti ai tornei, seguire le tue squadre e scalare il tabellone.</p>
+    </div>
   </div>
 
-  <div class="campo">
-    <label for="password">Password</label>
-    <input id="password" name="password" type="password" placeholder="Inserisci password" autocomplete="current-password"
-           [(ngModel)]="password" [class.sbagliato]="erroreServer() || (inviato() && password === '')" />
-    @if (inviato() && password === '' && !erroreServer()) {
-      <span class="aiuto">La password è obbligatoria</span>
+  <form class="accesso-form" (ngSubmit)="accedi()" novalidate>
+    <span class="occhiello">Accesso</span>
+    <h1>Accedi ad <span class="verde">ArenaHub</span></h1>
+
+    @if (erroreServer()) {
+      <div class="banner-errore">{{ erroreServer() }}. Riprova.</div>
     }
-  </div>
 
-  <button type="submit" class="btn btn-verde" [disabled]="caricamento()">
-    {{ caricamento() ? 'Accesso in corso…' : 'Accedi' }}
-  </button>
+    <div class="campo">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Inserisci email" autocomplete="email"
+             [(ngModel)]="email" [class.sbagliato]="erroreServer() || (inviato() && !emailValida())" />
+      @if (inviato() && !emailValida()) {
+        <span class="aiuto">Inserisci un'email valida</span>
+      }
+    </div>
 
-  <p class="sotto">Non sei registrato? <a routerLink="/registrazione">Registrati</a></p>
+    <div class="campo">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="Inserisci password" autocomplete="current-password"
+             [(ngModel)]="password" [class.sbagliato]="erroreServer() || (inviato() && password === '')" />
+      @if (inviato() && password === '' && !erroreServer()) {
+        <span class="aiuto">La password è obbligatoria</span>
+      }
+    </div>
 
-  @if (modalitaMock) {
-    <p class="sotto">Dati di prova: {{ emailProva }} · {{ passwordProva }}<br />Admin: {{ emailAdmin }} · {{ passwordAdmin }}</p>
-  }
-</form>
+    <button type="submit" class="btn btn-verde" [disabled]="caricamento()">
+      {{ caricamento() ? 'Accesso in corso…' : 'Accedi' }}
+    </button>
+
+    <p class="sotto">Non sei registrato? <a routerLink="/registrazione">Registrati</a></p>
+
+    @if (modalitaMock) {
+      <p class="dati-prova">Dati di prova: {{ emailProva }} · {{ passwordProva }}<br />Admin: {{ emailAdmin }} · {{ passwordAdmin }}</p>
+    }
+  </form>
+</section>

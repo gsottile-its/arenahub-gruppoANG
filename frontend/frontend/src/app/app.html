@@ -2,6 +2,9 @@
 
 <app-toast />
 
+<!-- pannelli che passano sopra la pagina quando cambi pagina -->
+<div class="transizione" aria-hidden="true"><span></span><span></span><span></span></div>
+
 <!-- sfondo di tutte le pagine: stesso nero e stesse forme della home, fermo mentre scorri -->
 <div class="sfondo-sito" aria-hidden="true">
   <svg class="motivi" viewBox="0 0 1600 1800" preserveAspectRatio="xMidYMid slice">
@@ -18,4 +21,30 @@
   <router-outlet />
 </main>
 
-<footer class="footer">© 2026 ArenaHub</footer>
+<footer class="footer">
+  <div class="footer-alto">
+    <div class="footer-marchio">
+      <a routerLink="/" class="footer-logo">Arena<span>Hub</span></a>
+      <p>La piattaforma per organizzare tornei di videogiochi: crea la tua squadra, iscriviti e scala il tabellone.</p>
+    </div>
+
+    <nav class="footer-colonna">
+      <span class="occhiello">Naviga</span>
+      <a routerLink="/">Home</a>
+      <a routerLink="/tornei">Tornei</a>
+      <a routerLink="/login">Accedi</a>
+      <a routerLink="/registrazione">Registrati</a>
+    </nav>
+
+    <div class="footer-colonna">
+      <span class="occhiello">Il progetto</span>
+      <a href="https://www.laziodigital.it/" target="_blank" rel="noopener">Lazio Digital ITS Academy</a>
+      <span>Project Work · Gruppo ANG</span>
+    </div>
+  </div>
+
+  <div class="footer-basso">
+    <span>© 2026 ArenaHub</span>
+    <button class="torna-su" (click)="tornaSu()">Torna su <span>↑</span></button>
+  </div>
+</footer>

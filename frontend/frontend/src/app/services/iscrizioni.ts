@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, delay, of, switchMap } from 'rxjs';
+import { Observable, delay, forkJoin, of, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { RispostaDisiscrizione, RispostaIscrizione } from '../models/torneo';
 import { AuthService } from './auth';
@@ -21,12 +21,21 @@ export class IscrizioniService {
       return this.http.post<RispostaIscrizione>(`${environment.apiUrl}/tornei/${idTorneo}/iscrizioni`, corpo);
     }
 
-    return this.tornei.getTorneo(idTorneo).pipe(
-      switchMap(t => {
+    return forkJoin([this.tornei.getTorneo(idTorneo), this.tornei.listaMock()]).pipe(
+      switchMap(([t, tutti]) => {
         if (t.stato !== 'iscrizioni_aperte') return erroreMock(422, { errore: 'Le iscrizioni non sono aperte' });
         if (t.miaIscrizione && t.miaIscrizione.stato !== 'ritirata') return erroreMock(409, { errore: 'Già iscritto a questo torneo' });
         if (t.giocatoriPerSquadra > 1 && idSquadra === null) {
           return erroreMock(422, { errore: 'Questo torneo è a squadre: scegli la squadra da iscrivere' });
+        }
+
+        // limite: contano le iscrizioni non ritirate a tornei non conclusi né annullati
+        const limite = this.mockDb.limiteTornei();
+        const attive = tutti.filter(c =>
+          c.mioStato !== null && c.mioStato !== 'ritirata' && c.stato !== 'concluso' && c.stato !== 'annullato'
+        ).length;
+        if (attive >= limite) {
+          return erroreMock(422, { errore: `Hai raggiunto il limite di ${limite} tornei`, limite });
         }
 
         const pieno = t.iscritti >= t.postiMax;

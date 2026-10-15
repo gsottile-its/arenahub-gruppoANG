@@ -16,7 +16,7 @@ export class ToastService {
   mostra(testo: string, colore: ColoreToast = 'verde') {
     const id = ++this.ultimoId;
     this.messaggi.update(lista => [...lista, { id, testo, colore }]);
-    setTimeout(() => this.chiudi(id), 4500);
+    setTimeout(() => this.chiudi(id), 3000);
   }
 
   chiudi(id: number) {

@@ -9,14 +9,15 @@ import { FORMATO_EMAIL } from '../login/login';
 @Component({
   selector: 'app-profilo',
   imports: [FormsModule],
-  templateUrl: './profilo.html'
+  templateUrl: './profilo.html',
+  styleUrl: './profilo.css'
 })
 export class Profilo {
   private auth = inject(AuthService);
   private toast = inject(ToastService);
   private location = inject(Location);
 
-  private originale: Utente | null = null;
+  protected originale: Utente | null = null;
 
   nickname = '';
   email = '';

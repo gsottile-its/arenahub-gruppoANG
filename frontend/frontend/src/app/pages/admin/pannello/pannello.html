@@ -3,6 +3,21 @@
   <h1>Ciao <span class="verde">{{ auth.utente()?.nickname }}</span></h1>
   <p class="sottotitolo">Da qui crei i tornei, li apri alle iscrizioni e gestisci gli iscritti.</p>
 
+  <form class="limite" (ngSubmit)="salvaLimite()" novalidate>
+    <div class="limite-testo">
+      <span class="limite-titolo">Tornei massimi per utente</span>
+      <span class="limite-nota">Vale per tutti gli utenti della piattaforma.</span>
+    </div>
+    <input type="number" name="limite" min="1" step="1" aria-label="Tornei massimi per utente"
+           [(ngModel)]="limite" [disabled]="!limiteCaricato()" [class.sbagliato]="erroreLimite()" />
+    <button type="submit" class="btn btn-verde" [disabled]="!limiteCaricato() || salvataggio()">
+      {{ salvataggio() ? 'Salvataggio…' : 'Salva' }}
+    </button>
+    @if (erroreLimite()) {
+      <span class="limite-errore">{{ erroreLimite() }}</span>
+    }
+  </form>
+
   <div class="tessere">
     <a routerLink="/admin/tornei" class="tessera principale">
       <span class="numero">01</span>

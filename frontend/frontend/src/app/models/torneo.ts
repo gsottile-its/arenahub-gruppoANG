@@ -135,3 +135,12 @@ export interface RispostaTabellone {
   partiteCreate: number;
   partite: { id: number; iscrizioneA: number; iscrizioneB: number | null }[];
 }
+
+// get e put /api/configurazione/limite-iscrizioni
+export interface LimiteIscrizioni {
+  maxTorneiPerUtente: number;
+}
+
+export interface LimiteAggiornato extends LimiteIscrizioni {
+  dataModifica: string;
+}

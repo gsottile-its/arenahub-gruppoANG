@@ -156,3 +156,19 @@
     }
   </div>
 </div>
+
+<!-- spade che si incrociano dopo un'iscrizione riuscita: il ciclo ricrea il blocco così l'animazione riparte -->
+@for (n of [festa()]; track n) {
+  @if (n > 0) {
+    <div class="incrocio" aria-hidden="true">
+      <div class="scena">
+        <span class="lampo"></span>
+        <svg class="spada-festa sx" viewBox="0 0 40 76"><path d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
+        <svg class="spada-festa dx" viewBox="0 0 40 76"><path d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
+        <span class="scintille"><i style="--a: -25deg"></i><i style="--a: -62deg"></i><i style="--a: 155deg"></i></span>
+        <span class="scritta">Iscritto!</span>
+      </div>
+    </div>
+  }
+}
+

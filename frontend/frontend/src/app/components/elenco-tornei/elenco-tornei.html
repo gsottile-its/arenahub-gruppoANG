@@ -109,13 +109,16 @@
   }
 
   <div class="elenco" [class.lista]="vista() === 'lista'">
-    @for (t of torneiFiltrati(); track t.id) {
-      <app-card-torneo [torneo]="t" [vista]="vista()" (apri)="apriDettaglio($event)" />
-    } @empty {
-      @if (tornei().length > 0) {
-        <p class="messaggio">Nessun torneo corrisponde alla ricerca.</p>
-      } @else {
-        <p class="messaggio">{{ messaggioVuoto() }}</p>
+    <!-- il ciclo esterno cambia con la vista: le card vengono ricreate e l'animazione riparte -->
+    @for (v of [vista()]; track v) {
+      @for (t of torneiFiltrati(); track t.id) {
+        <app-card-torneo [style.--i]="$index" [torneo]="t" [vista]="v" (apri)="apriDettaglio($event)" />
+      } @empty {
+        @if (tornei().length > 0) {
+          <p class="messaggio">Nessun torneo corrisponde alla ricerca.</p>
+        } @else {
+          <p class="messaggio">{{ messaggioVuoto() }}</p>
+        }
       }
     }
   </div>
@@ -132,5 +135,5 @@
 }
 
 @if (idAperto(); as id) {
-  <app-dettaglio-torneo [idTorneo]="id" (chiudi)="chiudiDettaglio()" (apri)="apriDettaglio($event)" (cambiato)="ricarica()" />
+  <app-dettaglio-torneo [idTorneo]="id" (chiudi)="chiudiDettaglio()" (apri)="apriDettaglio($event)" (cambiato)="ricarica(true)" />
 }

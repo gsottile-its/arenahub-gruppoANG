@@ -143,8 +143,9 @@ export class ElencoTornei implements OnInit {
   }
 
 
-  ricarica() {
-    this.caricamento.set(true);
+  // silenzioso: aggiorna i dati senza mostrare "caricamento" (es. dopo un'iscrizione dal popup)
+  ricarica(silenzioso = false) {
+    if (!silenzioso) this.caricamento.set(true);
     this.errore.set(null);
 
     this.carica()(this.filtroStato(), this.pagina()).subscribe({

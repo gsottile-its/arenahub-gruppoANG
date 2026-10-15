@@ -49,6 +49,9 @@ export class MockDb {
 
   readonly profilo = signal<Utente | null>(null);
 
+  // limite di tornei per utente, uguale per tutti (contratto: 3 di partenza)
+  readonly limiteTornei = signal(3);
+
   // area admin: tornei creati o modificati, iscritti visti dall'admin e tabelloni generati
   readonly tornei = signal<Record<number, TorneoDettaglio>>({});
   readonly iscritti = signal<Record<number, IscrizioneAdmin[]>>({});

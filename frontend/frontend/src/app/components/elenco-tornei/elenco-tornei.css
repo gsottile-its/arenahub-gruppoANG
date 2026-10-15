@@ -1,4 +1,33 @@
-.titolo { margin-bottom: 20px; }
+/* titolo grande che sale da sotto una maschera, con la barretta verde che si allunga */
+.titolo {
+  position: relative;
+  margin: 10px 0 34px;
+  padding-bottom: 18px;
+  font-size: clamp(2.8rem, 6vw, 4.6rem);
+  line-height: 1;
+  animation: titolo-entra 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+.titolo::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  bottom: 0;
+  width: 90px;
+  height: 6px;
+  background: var(--accento);
+  transform: skewX(-24deg);
+  transform-origin: left;
+  animation: barretta 0.8s cubic-bezier(0.77, 0, 0.18, 1) 0.8s both;
+}
+
+@keyframes barretta {
+  from { scale: 0 1; }
+}
+
+.barra-strumenti { animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both; }
+.filtri { animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both; }
+.barra-elenco { animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both; }
 .titolo .verde { color: var(--accento); }
 
 .viste {

@@ -1,0 +1,89 @@
+.profilo-pagina {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 48px;
+  align-items: start;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* scheda utente */
+.scheda-utente {
+  position: sticky;
+  top: calc(var(--altezza-header) + 24px);
+  padding: 32px 28px;
+  background-color: var(--card);
+  background-image: var(--texture-chiara);
+  border-top: 3px solid var(--accento);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  margin: 0 0 24px;
+  background: var(--accento);
+  color: #111;
+  font-family: var(--font-titoli);
+  font-size: 3rem;
+  text-transform: uppercase;
+}
+
+.scheda-utente h2 {
+  margin: 6px 0 10px;
+  font-size: 2.2rem;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.scheda-utente p { margin: 0 0 4px; color: var(--testo-tenue); overflow-wrap: anywhere; }
+.scheda-utente .mail { color: var(--accento); font-size: 0.95rem; }
+
+.profilo-form h1 { font-size: 3rem; margin: 0 0 12px; }
+
+.sezione {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 28px 0 16px;
+  font-size: 1.1rem;
+  color: var(--accento);
+}
+
+.sezione::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+
+.azioni-profilo {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.azioni-profilo .btn {
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  background-image: none;
+}
+
+.azioni-profilo .btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+@media (max-width: 860px) {
+  .profilo-pagina { grid-template-columns: 1fr; gap: 32px; }
+  .scheda-utente { position: static; }
+}
+
+.scheda-utente { animation: entra-su 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
+.profilo-form h1 { animation: titolo-entra 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both; }
+.profilo-form > :not(h1) { animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both; }
+.avatar { animation: avatar-entra 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both; }
+
+@keyframes avatar-entra {
+  from { scale: 0.3; opacity: 0; }
+}
+

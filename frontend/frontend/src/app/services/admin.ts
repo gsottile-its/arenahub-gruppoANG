@@ -4,12 +4,12 @@ import { Observable, delay, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   DatiTorneo, IscrizioneAdmin, PaginaIscrizioni, RispostaConferma, RispostaDisiscrizione, RispostaImmagine,
-  RispostaStato, RispostaTabellone, StatoTorneo, TorneoCreato, TorneoDettaglio
+  LimiteAggiornato, LimiteIscrizioni, RispostaStato, RispostaTabellone, StatoTorneo, TorneoCreato, TorneoDettaglio
 } from '../models/torneo';
 import { AuthService } from './auth';
 import { CataloghiService } from './cataloghi';
 import { TorneiService } from './tornei';
-import { MockDb, RITARDO_MOCK, erroreMock, paginaMock } from './mock-db';
+import { MockDb, RITARDO_MOCK, adessoIso, erroreMock, paginaMock } from './mock-db';
 
 // transizioni ammesse dal contratto (patch /api/tornei/{id}/stato)
 export const TRANSIZIONI: Record<StatoTorneo, StatoTorneo[]> = {
@@ -324,5 +324,25 @@ export class AdminService {
   private numeraAttesa(lista: IscrizioneAdmin[]): IscrizioneAdmin[] {
     let posizione = 0;
     return lista.map(i => (i.stato === 'lista_attesa' ? { ...i, posizioneAttesa: ++posizione } : { ...i, posizioneAttesa: null }));
+  }
+
+  // get /api/configurazione/limite-iscrizioni
+  getLimiteIscrizioni(): Observable<LimiteIscrizioni> {
+    if (!environment.useMock) {
+      return this.http.get<LimiteIscrizioni>(`${environment.apiUrl}/configurazione/limite-iscrizioni`);
+    }
+    return of({ maxTorneiPerUtente: this.mockDb.limiteTornei() }).pipe(delay(RITARDO_MOCK));
+  }
+
+  // put /api/configurazione/limite-iscrizioni
+  aggiornaLimiteIscrizioni(maxTorneiPerUtente: number): Observable<LimiteAggiornato> {
+    if (!environment.useMock) {
+      return this.http.put<LimiteAggiornato>(`${environment.apiUrl}/configurazione/limite-iscrizioni`, { maxTorneiPerUtente });
+    }
+    if (!Number.isInteger(maxTorneiPerUtente) || maxTorneiPerUtente < 1) {
+      return erroreMock(422, { errore: 'Il limite deve essere un intero maggiore o uguale a 1' });
+    }
+    this.mockDb.limiteTornei.set(maxTorneiPerUtente);
+    return of({ maxTorneiPerUtente, dataModifica: adessoIso() }).pipe(delay(RITARDO_MOCK));
   }
 }

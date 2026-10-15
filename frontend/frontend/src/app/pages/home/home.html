@@ -6,11 +6,23 @@
   <div class="hero-velo"></div>
 
   <div class="hero-contenuto">
+    <!-- ogni parola sale da sotto, --i è il ritardo -->
     <h1>
-      Crea il tuo team<br />e vinci il <span class="verde">torneo</span>!
+      <span class="riga">
+        <span class="maschera"><span style="--i: 0">Crea</span></span>
+        <span class="maschera"><span style="--i: 1">il</span></span>
+        <span class="maschera"><span style="--i: 2">tuo</span></span>
+        <span class="maschera"><span style="--i: 3">team</span></span>
+      </span>
+      <span class="riga">
+        <span class="maschera"><span style="--i: 4">e</span></span>
+        <span class="maschera"><span style="--i: 5">vinci</span></span>
+        <span class="maschera"><span style="--i: 6">il</span></span>
+        <span class="maschera"><span style="--i: 7"><span class="verde">torneo</span>!</span></span>
+      </span>
       <!-- spade -->
-      <svg class="spada sx" viewBox="0 0 40 76" aria-hidden="true"><path d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
-      <svg class="spada dx" viewBox="0 0 40 76" aria-hidden="true"><path d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
+      <svg class="spada sx" viewBox="0 0 40 76" aria-hidden="true"><path pathLength="1" d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
+      <svg class="spada dx" viewBox="0 0 40 76" aria-hidden="true"><path pathLength="1" d="M20 2 30 13V49H10V13ZM20 15V46M3 49H37L35 54H5ZM17 54H23V66H17ZM20 66 24 70 20 74 16 70Z" /></svg>
     </h1>
     <p class="sottotitolo">
       Trova i tornei dei tuoi giochi preferiti, iscriviti da solo o con la tua squadra
@@ -29,6 +41,11 @@
       }
     </div>
   </div>
+
+  <div class="scorri" aria-hidden="true">
+    <span>Scorri</span>
+    <i></i>
+  </div>
 </section>
 
 <div class="sfondo-presentazione">
@@ -41,9 +58,31 @@
     <path class="chiaro" d="M240 1650 780 1430 720 1550 180 1770Z" />
   </svg>
 
+<!-- nastri con le scritte che scorrono -->
+<div class="nastri" aria-hidden="true">
+  <div class="nastro nastro-scuro">
+    <div class="scorrimento">
+      @for (n of [0, 1, 2, 3]; track n) {
+        @for (p of paroleNastro; track p) {
+          <span>{{ p }}</span><i></i>
+        }
+      }
+    </div>
+  </div>
+  <div class="nastro nastro-verde">
+    <div class="scorrimento">
+      @for (n of [0, 1, 2, 3]; track n) {
+        @for (p of paroleNastro; track p) {
+          <span>{{ p }}</span><i></i>
+        }
+      }
+    </div>
+  </div>
+</div>
+
 <div class="presentazione">
   @for (b of blocchi; track b.titolo; let dispari = $odd) {
-    <section class="blocco" [class.inverso]="dispari">
+    <section class="blocco rivela" [class.inverso]="dispari">
       <div class="media">
         <img class="foto" [src]="b.immagine" alt="" loading="lazy" />
         <span class="parola">{{ b.parola }}</span>
@@ -66,7 +105,55 @@
   }
 </div>
 
-<aside class="banner-its" [class.aperto]="chiSiamoAperto()">
+<!-- numeri presi dai cataloghi -->
+@if (numeri(); as lista) {
+  <section class="numeri rivela">
+    <div class="titolo-sezione">
+      <span class="occhiello">L'arena in numeri</span>
+      <h2>Scegli dove <span class="verde">sfidarti</span></h2>
+    </div>
+    <div class="numeri-griglia">
+      @for (n of lista; track n.etichetta) {
+        <div class="numero-voce">
+          <span class="cifra" [style.--fine]="n.valore" [attr.aria-label]="n.valore"></span>
+          <span class="etichetta">{{ n.etichetta }}</span>
+        </div>
+      }
+    </div>
+  </section>
+}
+
+<!-- giochi: passando sopra una fetta si allarga -->
+<section class="giochi rivela">
+  <div class="titolo-sezione">
+    <span class="occhiello">I giochi</span>
+    <h2>Il tuo campo di <span class="verde">battaglia</span></h2>
+  </div>
+  <div class="giochi-fila">
+    @for (g of giochi; track g.nome; let i = $index) {
+      <a routerLink="/tornei" class="gioco" [style.--i]="i">
+        <img [src]="g.immagine" alt="" loading="lazy" />
+        <span>{{ g.nome }}</span>
+      </a>
+    }
+  </div>
+</section>
+
+<!-- chiusura con invito finale -->
+<section class="finale rivela">
+  <span class="finale-sfondo" aria-hidden="true">Arena</span>
+  <span class="occhiello">Tocca a te</span>
+  <h2>Pronto a entrare<br />nell'<span class="verde">arena</span>?</h2>
+  <p>I tornei ti aspettano: scegli il tuo gioco, entra in squadra e lascia il segno sul tabellone.</p>
+  <div class="azioni-finale">
+    <a routerLink="/tornei" class="btn btn-verde">Scopri i tornei</a>
+    @if (!auth.loggato()) {
+      <a routerLink="/registrazione" class="btn">Crea account</a>
+    }
+  </div>
+</section>
+
+<aside class="banner-its rivela" [class.aperto]="chiSiamoAperto()">
   <div class="banner-riga">
     <a class="banner-logo" href="https://www.laziodigital.it/" target="_blank" rel="noopener">
       <img src="img/its/logo.png" alt="Lazio Digital ITS Academy" />

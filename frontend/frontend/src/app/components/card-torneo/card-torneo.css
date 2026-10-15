@@ -1,6 +1,29 @@
-:host { display: block; }
+/* le card entrano una dopo l'altra, --i arriva dall'elenco */
+:host {
+  display: block;
+  animation: entra-su 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(0.3s + var(--i, 0) * 0.06s);
+}
 
 :host(:hover) { filter: drop-shadow(0 8px 18px rgba(195, 255, 107, 0.18)); }
+
+/* linea verde che corre sul bordo alto al passaggio */
+.card { position: relative; }
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 3px;
+  background: var(--accento);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover::before { scale: 1 1; }
+.card:hover .immagine img { filter: brightness(1.1) saturate(1.15); }
 
 /* griglia: tutta la card è inclinata con lo stesso angolo, il contenuto viene raddrizzato */
 .card {
@@ -41,7 +64,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform 0.3s, filter 0.3s;
 }
 
 .immagine-vuota,
@@ -126,7 +149,7 @@ h3, .titolo, .info li, .linea span, .filigrana { overflow-wrap: anywhere; }
 .riga {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 38%;
+  grid-template-columns: 38% 1fr;
   height: 165px;
   overflow: hidden;
   background-color: var(--card);
@@ -134,13 +157,13 @@ h3, .titolo, .info li, .linea span, .filigrana { overflow-wrap: anywhere; }
   transition: transform 0.2s;
 }
 
-.riga:hover { transform: translateX(4px); }
+.riga:hover { transform: translateX(-4px); box-shadow: inset -4px 0 0 var(--accento); }
 .riga:hover .copertina img,
 .riga:hover .copertina-vuota { transform: scale(1.05); }
 
 .filigrana {
   position: absolute;
-  left: -12px;
+  right: -12px;
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--font-titoli);
@@ -186,23 +209,24 @@ h3, .titolo, .info li, .linea span, .filigrana { overflow-wrap: anywhere; }
   overflow: hidden;
   cursor: pointer;
   background: #1a1a1a;
-  clip-path: polygon(16% 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 0 100%);
 }
 
+.copertina { order: -1; }
 .copertina img { position: absolute; inset: 0; }
 .copertina-vuota { font-size: 2.2rem; }
-.copertina .chip { left: auto; right: 16px; }
+.copertina .chip { left: 16px; }
 
 .etichetta {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: 0;
-  padding: 6px 22px 6px 34px;
+  padding: 6px 34px 6px 22px;
   background: #3a3a3a;
   color: var(--testo);
   font-family: var(--font-titoli);
   text-transform: uppercase;
-  clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%);
 }
 
 @media (max-width: 640px) {

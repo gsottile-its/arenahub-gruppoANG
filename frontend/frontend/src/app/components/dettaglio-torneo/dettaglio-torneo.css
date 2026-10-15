@@ -17,6 +17,11 @@
   overflow-y: auto;
   background: var(--card);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: popup-entra 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes popup-entra {
+  from { opacity: 0; translate: 0 40px; scale: 0.96; }
 }
 
 .chiudi {
@@ -246,3 +251,149 @@
   .banner { height: 220px; }
   .banner-testo h2 { font-size: 2rem; }
 }
+
+/* animazione dell'iscrizione: non blocca i clic e dura poco più di un secondo */
+.incrocio {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.55), transparent 70%);
+  animation: incrocio-sfuma 1.5s ease both;
+}
+
+.scena {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 320px;
+  height: 320px;
+  animation: impatto 1.5s ease both;
+}
+
+.spada-festa {
+  position: absolute;
+  width: 150px;
+  height: 285px;
+  fill: rgba(17, 17, 17, 0.7);
+  stroke: var(--accento);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(195, 255, 107, 0.45));
+}
+
+.spada-festa.sx { animation: entra-sx 1.5s linear both; }
+.spada-festa.dx { animation: entra-dx 1.5s linear both; }
+
+/* lampo sopra le spade, nel punto dove si incrociano */
+.lampo {
+  position: absolute;
+  z-index: 1;
+  top: 10px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0, rgba(195, 255, 107, 0.95) 12%, rgba(195, 255, 107, 0) 60%);
+  mix-blend-mode: screen;
+  animation: lampo 1.5s ease-out both;
+}
+
+/* scintille: lineette che schizzano fuori dal punto d'impatto */
+.scintille {
+  position: absolute;
+  z-index: 2;
+  top: 150px;
+  left: 50%;
+}
+
+.scintille i {
+  position: absolute;
+  left: 0;
+  top: -1.5px;
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(to right, transparent, var(--accento) 40%, #fff);
+  transform-origin: left center;
+  animation: scintilla 1.5s ease-out both;
+}
+
+.scintille i:nth-child(even) { width: 45px; }
+
+@keyframes scintilla {
+  0%, 30% { transform: rotate(var(--a)) translateX(20px) scaleX(0); opacity: 0; }
+  33% { transform: rotate(var(--a)) translateX(30px) scaleX(1); opacity: 1; }
+  55%, 100% { transform: rotate(var(--a)) translateX(120px) scaleX(0.3); opacity: 0; }
+}
+
+.scritta {
+  position: absolute;
+  bottom: -70px;
+  font-family: var(--font-titoli);
+  font-size: 3.4rem;
+  line-height: 1;
+  color: var(--accento);
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+  animation: scritta 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes incrocio-sfuma {
+  0% { opacity: 0; }
+  10%, 75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* partono dagli angoli in basso: tanti punti presi su una curva, così il movimento è continuo */
+@keyframes entra-sx {
+  0% { translate: -50vw 60vh; rotate: -40.0deg; }
+  2.5% { translate: -49.79vw 58.77vh; rotate: -39.3deg; }
+  5% { translate: -49.15vw 55.19vh; rotate: -37.1deg; }
+  7.5% { translate: calc(-48.02vw - 0.1px) calc(49.53vh + 0.1px); rotate: -33.5deg; }
+  10% { translate: calc(-46.32vw - 0.4px) calc(42.22vh + 0.2px); rotate: -28.6deg; }
+  12.5% { translate: calc(-43.93vw - 0.9px) calc(33.83vh + 0.5px); rotate: -22.4deg; }
+  15% { translate: calc(-40.74vw - 1.9px) calc(25.03vh + 1px); rotate: -15.1deg; }
+  17.5% { translate: calc(-36.63vw - 3.4px) calc(16.52vh + 1.8px); rotate: -6.7deg; }
+  20% { translate: calc(-31.5vw - 5.5px) calc(9vh + 3px); rotate: 2.5deg; }
+  22.5% { translate: calc(-25.28vw - 8.4px) calc(3.12vh + 4.6px); rotate: 12.5deg; }
+  25% { translate: calc(-17.93vw - 12.1px) calc(-0.58vh + 6.6px); rotate: 23.0deg; }
+  27.5% { translate: calc(-9.48vw - 16.6px) calc(-1.7vh + 9.1px); rotate: 33.9deg; }
+  30%, 100% { translate: -22px 12px; rotate: 45.0deg; }
+}
+
+@keyframes entra-dx {
+  0% { translate: 50vw 60vh; rotate: 40.0deg; }
+  2.5% { translate: 49.79vw 58.77vh; rotate: 39.3deg; }
+  5% { translate: 49.15vw 55.19vh; rotate: 37.1deg; }
+  7.5% { translate: calc(48.02vw + 0.1px) calc(49.53vh + 0.1px); rotate: 33.5deg; }
+  10% { translate: calc(46.32vw + 0.4px) calc(42.22vh + 0.2px); rotate: 28.6deg; }
+  12.5% { translate: calc(43.93vw + 0.9px) calc(33.83vh + 0.5px); rotate: 22.4deg; }
+  15% { translate: calc(40.74vw + 1.9px) calc(25.03vh + 1px); rotate: 15.1deg; }
+  17.5% { translate: calc(36.63vw + 3.4px) calc(16.52vh + 1.8px); rotate: 6.7deg; }
+  20% { translate: calc(31.5vw + 5.5px) calc(9vh + 3px); rotate: -2.5deg; }
+  22.5% { translate: calc(25.28vw + 8.4px) calc(3.12vh + 4.6px); rotate: -12.5deg; }
+  25% { translate: calc(17.93vw + 12.1px) calc(-0.58vh + 6.6px); rotate: -23.0deg; }
+  27.5% { translate: calc(9.48vw + 16.6px) calc(-1.7vh + 9.1px); rotate: -33.9deg; }
+  30%, 100% { translate: 22px 12px; rotate: -45.0deg; }
+}
+
+@keyframes impatto {
+  0%, 30% { translate: 0 0; }
+  33% { translate: -8px 4px; }
+  36% { translate: 7px -5px; }
+  39% { translate: -4px 2px; }
+  42%, 100% { translate: 0 0; }
+}
+
+@keyframes lampo {
+  0%, 29% { scale: 0; opacity: 0; }
+  32% { scale: 0.6; opacity: 1; }
+  60%, 100% { scale: 1.8; opacity: 0; }
+}
+
+@keyframes scritta {
+  0%, 35% { opacity: 0; scale: 1.6; }
+  50%, 100% { opacity: 1; scale: 1; }
+}
+

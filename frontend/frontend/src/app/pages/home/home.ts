@@ -1,6 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, afterNextRender, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { AuthService } from '../../services/auth';
+import { CataloghiService } from '../../services/cataloghi';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +16,65 @@ export class Home {
 
   // sezione chi siamo dentro il banner its
   chiSiamoAperto = signal(false);
+
+  paroleNastro = ['Gioca', 'Competi', 'Vinci', 'Scala il tabellone', "Entra nell'arena"];
+
+  // finché non arrivano i dati restano a zero, se la richiesta fallisce la sezione sparisce
+  private cataloghi = inject(CataloghiService);
+  numeri = toSignal(
+    forkJoin({
+      giochi: this.cataloghi.getGiochi(),
+      piattaforme: this.cataloghi.getPiattaforme(),
+      tipologie: this.cataloghi.getTipologie()
+    }).pipe(
+      map(r => [
+        { valore: r.giochi.length, etichetta: 'Giochi' },
+        { valore: r.piattaforme.length, etichetta: 'Piattaforme' },
+        { valore: r.tipologie.length, etichetta: 'Generi' }
+      ]),
+      catchError(() => of(null))
+    ),
+    {
+      initialValue: [
+        { valore: 0, etichetta: 'Giochi' },
+        { valore: 0, etichetta: 'Piattaforme' },
+        { valore: 0, etichetta: 'Generi' }
+      ]
+    }
+  );
+
+  giochi = [
+    { nome: 'Valorant', immagine: 'img/giochi/valorant.webp' },
+    { nome: 'League of Legends', immagine: 'img/giochi/league-of-legends.webp' },
+    { nome: 'Counter-Strike 2', immagine: 'img/giochi/counter-strike-2.webp' },
+    { nome: 'Rocket League', immagine: 'img/giochi/rocket-league.webp' },
+    { nome: 'EA Sports FC', immagine: 'img/giochi/ea-sports-fc.webp' },
+    { nome: 'Street Fighter 6', immagine: 'img/giochi/street-fighter-6.webp' },
+    { nome: 'Overwatch 2', immagine: 'img/giochi/overwatch-2.webp' },
+    { nome: 'Apex Legends', immagine: 'img/giochi/apex-legends.webp' },
+    { nome: 'Mario Kart', immagine: 'img/giochi/mario-kart.webp' },
+    { nome: 'Super Smash Bros.', immagine: 'img/giochi/super-smash-bros-ultimate.webp' }
+  ];
+
+  constructor() {
+    const pagina = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    const destroyRef = inject(DestroyRef);
+
+    // quando un elemento entra nello schermo parte la sua animazione
+    afterNextRender(() => {
+      const osservatore = new IntersectionObserver(voci => {
+        for (const voce of voci) {
+          if (voce.isIntersecting) {
+            voce.target.classList.add('visibile');
+            osservatore.unobserve(voce.target);
+          }
+        }
+      }, { threshold: 0.2 });
+
+      pagina.querySelectorAll('.rivela').forEach(el => osservatore.observe(el));
+      destroyRef.onDestroy(() => osservatore.disconnect());
+    });
+  }
 
   // testi provvisori della presentazione sotto il video
   blocchi = [

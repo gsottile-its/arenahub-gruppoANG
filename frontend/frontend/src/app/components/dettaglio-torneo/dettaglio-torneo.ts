@@ -39,6 +39,7 @@ export class DettaglioTorneo {
   idSquadraScelta: number | null = null;
   inAzione = signal(false);
   chiediConferma = signal(false);
+  festa = signal(0);
 
   pieno = computed(() => {
     const t = this.torneo();
@@ -176,11 +177,17 @@ export class DettaglioTorneo {
           );
         } else {
           this.toast.mostra('Ti sei iscritto con successo!', 'verde');
+          this.festa.update(n => n + 1);
         }
         this.ricarica();
       },
       error: err => {
         this.inAzione.set(false);
+        // limite di tornei raggiunto (422 con il campo limite)
+        if (err.status === 422 && err.error?.limite) {
+          this.toast.mostra(`Hai raggiunto il limite di ${err.error.limite} tornei. Disiscriviti da un torneo per iscriverti a un altro.`, 'giallo');
+          return;
+        }
         this.toast.mostra(err.error?.errore ?? 'Iscrizione non riuscita', 'rosso');
       }
     });
