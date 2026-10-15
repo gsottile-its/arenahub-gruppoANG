@@ -2,6 +2,7 @@ package com.arenahub.repository;
 
 import com.arenahub.entity.Iscrizione;
 import com.arenahub.entity.enums.IscrizioneStato;
+import com.arenahub.entity.enums.TorneoStato;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,5 +51,21 @@ public interface IscrizioneRepository extends JpaRepository<Iscrizione, Long> {
     // Lo stato e' un enum di PostgreSQL: lo passo come parametro invece di scriverlo nella query.
     default List<Iscrizione> trovaAttiveDiUtente(Long idTorneo, Long idUtente) {
         return trovaDiUtenteEscluso(idTorneo, idUtente, IscrizioneStato.ritirata);
+    }
+
+    @Query("""
+            select count(i) from Iscrizione i
+            where i.stato <> :esclusa
+              and i.torneo.stato not in :finiti
+              and (i.utente.id = :idUtente
+                   or i.squadra.id in (select m.squadra.id from MembroSquadra m where m.utente.id = :idUtente))
+            """)
+    long contaIscrizioniAttive(@Param("idUtente") Long idUtente,
+                               @Param("esclusa") IscrizioneStato esclusa,
+                               @Param("finiti") Collection<TorneoStato> finiti);
+
+    default long contaTorneiAttivi(Long idUtente) {
+        return contaIscrizioniAttive(idUtente, IscrizioneStato.ritirata,
+                List.of(TorneoStato.concluso, TorneoStato.annullato));
     }
 }
