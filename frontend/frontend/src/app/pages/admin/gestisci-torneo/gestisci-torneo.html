@@ -51,7 +51,7 @@
     </div>
   </section>
 
-  @if (t.stato === 'iscrizioni_chiuse') {
+  @if (t.stato === 'iscrizioni_chiuse' && !tabelloneGenerato()) {
     <p class="avviso">Per avviare il torneo («In corso») genera prima il tabellone.</p>
   }
 
@@ -106,11 +106,24 @@
   </section>
 
   <section class="tabellone">
-    <button class="btn btn-verde grande" [disabled]="t.stato !== 'iscrizioni_chiuse' || tabelloneGenerato() || inAzione()" (click)="generaTabellone()">
-      Genera tabellone
-    </button>
-    <span class="nota">
-      @if (tabelloneGenerato()) { Tabellone generato. } @else { Disponibile a iscrizioni chiuse: accoppia a caso i partecipanti confermati. }
-    </span>
+    <h2>Tabellone</h2>
+
+    @if (!tabelloneGenerato()) {
+      <div class="genera">
+        <button class="btn btn-verde grande" [disabled]="t.stato !== 'iscrizioni_chiuse' || inAzione()" (click)="generaTabellone()">
+          Genera tabellone
+        </button>
+        <span class="nota">Disponibile a iscrizioni chiuse: accoppia a caso i partecipanti confermati.</span>
+      </div>
+    } @else if (t.stato === 'iscrizioni_chiuse') {
+      <p class="nota">Porta il torneo «In corso» per inserire i risultati.</p>
+    }
+
+    <app-tabellone
+      [idTorneo]="t.id"
+      [modificabile]="t.stato === 'in_corso'"
+      [versione]="versioneTabellone()"
+      (caricato)="tabelloneGenerato.set($event)"
+      (aggiornato)="caricaTorneo()" />
   </section>
 }

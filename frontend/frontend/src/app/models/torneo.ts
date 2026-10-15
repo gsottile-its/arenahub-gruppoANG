@@ -136,6 +136,44 @@ export interface RispostaTabellone {
   partite: { id: number; iscrizioneA: number; iscrizioneB: number | null }[];
 }
 
+
+export type StatoPartita = 'programmata' | 'in_corso' | 'conclusa';
+
+export interface Partecipante {
+  idIscrizione: number;
+  nome: string;
+}
+
+export interface Partita {
+  id: number;
+  stato: StatoPartita;
+  dataPartita: string | null;
+  partecipanteA: Partecipante | null;
+  punteggioA: number | null;
+  partecipanteB: Partecipante | null;
+  punteggioB: number | null;
+  vincitore: number | null;
+}
+
+export interface Turno {
+  round: number;
+  partite: Partita[];
+}
+
+export interface Tabellone {
+  idTorneo: number;
+  turni: Turno[];
+}
+
+export interface RispostaRisultato {
+  id: number;
+  stato: StatoPartita;
+  punteggioA: number;
+  punteggioB: number;
+  vincitore: Partecipante;
+  prossimaPartita: number | null;
+}
+
 // get e put /api/configurazione/limite-iscrizioni
 export interface LimiteIscrizioni {
   maxTorneiPerUtente: number;

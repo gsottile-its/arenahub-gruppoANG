@@ -4,7 +4,8 @@ import { Observable, delay, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   DatiTorneo, IscrizioneAdmin, PaginaIscrizioni, RispostaConferma, RispostaDisiscrizione, RispostaImmagine,
-  LimiteAggiornato, LimiteIscrizioni, RispostaStato, RispostaTabellone, StatoTorneo, TorneoCreato, TorneoDettaglio
+  LimiteAggiornato, LimiteIscrizioni, Partita, RispostaRisultato, RispostaStato, RispostaTabellone, StatoTorneo,
+  TorneoCreato, TorneoDettaglio, Turno
 } from '../models/torneo';
 import { AuthService } from './auth';
 import { CataloghiService } from './cataloghi';
@@ -263,12 +264,53 @@ export class AdminService {
         const confermate = tutti.filter(i => i.stato === 'confermata');
         if (confermate.length < 2) return erroreMock(422, { errore: 'Servono almeno 2 partecipanti confermati' });
 
-        this.mockDb.tabelloni.update(tutti => ({ ...tutti, [idTorneo]: true }));
-        const partite = [];
-        for (let i = 0; i < confermate.length; i += 2) {
-          partite.push({ id: idTorneo * 100 + i, iscrizioneA: confermate[i].id, iscrizioneB: confermate[i + 1]?.id ?? null });
+        const turni = this.creaTabelloneMock(idTorneo, confermate);
+        this.mockDb.tabelloni.update(tutti => ({ ...tutti, [idTorneo]: turni }));
+        const partite = turni[0].partite.map(p => ({
+          id: p.id,
+          iscrizioneA: p.partecipanteA!.idIscrizione,
+          iscrizioneB: p.partecipanteB?.idIscrizione ?? null
+        }));
+        return of<RispostaTabellone>({ idTorneo, round: 1, partiteCreate: partite.length, partite }).pipe(delay(RITARDO_MOCK));
+      })
+    );
+  }
+
+  registraRisultato(idPartita: number, idTorneo: number, punteggioA: number, punteggioB: number): Observable<RispostaRisultato> {
+    if (!environment.useMock) {
+      return this.http.patch<RispostaRisultato>(`${environment.apiUrl}/partite/${idPartita}/risultato`, { punteggioA, punteggioB });
+    }
+
+    return this.torneoMock(idTorneo).pipe(
+      switchMap(t => {
+        if (t.stato !== 'in_corso') return erroreMock(409, { errore: 'Il torneo non è in corso' });
+
+        const turni: Turno[] = structuredClone(this.mockDb.tabelloni()[idTorneo] ?? []);
+        const r = turni.findIndex(turno => turno.partite.some(p => p.id === idPartita));
+        if (r < 0) return erroreMock(404, { errore: 'Partita non trovata' });
+        const posizione = turni[r].partite.findIndex(p => p.id === idPartita);
+        const p = turni[r].partite[posizione];
+
+        if (!p.partecipanteA || !p.partecipanteB) return erroreMock(422, { errore: 'La partita non ha ancora due partecipanti' });
+        if (punteggioA === punteggioB) return erroreMock(422, { errore: 'Il pareggio non è ammesso' });
+        const successiva = turni[r + 1]?.partite[Math.floor(posizione / 2)];
+        if (p.stato === 'conclusa' && successiva?.stato === 'conclusa') {
+          return erroreMock(409, { errore: 'Il risultato non è più modificabile' });
         }
-        return of<RispostaTabellone>({ idTorneo, round: 1, partiteCreate: partite.length, partite });
+
+        const vincitore = punteggioA > punteggioB ? p.partecipanteA : p.partecipanteB;
+        Object.assign(p, { punteggioA, punteggioB, vincitore: vincitore.idIscrizione, stato: 'conclusa' });
+        if (successiva) {
+          if (posizione % 2 === 0) successiva.partecipanteA = vincitore;
+          else successiva.partecipanteB = vincitore;
+        } else {
+          this.salva({ ...t, stato: 'concluso' });
+        }
+        this.mockDb.tabelloni.update(tutti => ({ ...tutti, [idTorneo]: turni }));
+
+        return of<RispostaRisultato>({
+          id: p.id, stato: 'conclusa', punteggioA, punteggioB, vincitore, prossimaPartita: successiva?.id ?? null
+        }).pipe(delay(RITARDO_MOCK));
       })
     );
   }
@@ -319,6 +361,47 @@ export class AdminService {
         return numerata;
       })
     );
+  }
+
+  private creaTabelloneMock(idTorneo: number, confermate: IscrizioneAdmin[]): Turno[] {
+    const mescolate = [...confermate].sort(() => Math.random() - 0.5);
+    const n = mescolate.length;
+    let dimensione = 1;
+    while (dimensione < n) dimensione *= 2;
+    const numeroTurni = Math.log2(dimensione);
+
+    let id = idTorneo * 100;
+    const turni: Turno[] = [];
+    for (let round = 1; round <= numeroTurni; round++) {
+      const partite: Partita[] = [];
+      for (let i = 0; i < dimensione / 2 ** round; i++) {
+        partite.push({
+          id: ++id, stato: 'programmata', dataPartita: null,
+          partecipanteA: null, punteggioA: null, partecipanteB: null, punteggioB: null, vincitore: null
+        });
+      }
+      turni.push({ round, partite });
+    }
+
+    const passaggiDiretti = dimensione - n;
+    let prossimo = 0;
+    turni[0].partite.forEach((p, posizione) => {
+      const a = mescolate[prossimo++];
+      p.partecipanteA = { idIscrizione: a.id, nome: a.nome };
+      if (posizione < passaggiDiretti) {
+        p.stato = 'conclusa';
+        p.vincitore = a.id;
+        const successiva = turni[1]?.partite[Math.floor(posizione / 2)];
+        if (successiva) {
+          if (posizione % 2 === 0) successiva.partecipanteA = p.partecipanteA;
+          else successiva.partecipanteB = p.partecipanteA;
+        }
+      } else {
+        const b = mescolate[prossimo++];
+        p.partecipanteB = { idIscrizione: b.id, nome: b.nome };
+      }
+    });
+    return turni;
   }
 
   private numeraAttesa(lista: IscrizioneAdmin[]): IscrizioneAdmin[] {

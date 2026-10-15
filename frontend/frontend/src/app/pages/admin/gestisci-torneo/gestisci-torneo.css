@@ -126,12 +126,16 @@
 
 .pagine { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px; color: var(--testo-tenue); }
 
-.tabellone {
+.tabellone { margin-top: 30px; }
+.tabellone h2 { margin: 0 0 14px; font-size: 1.6rem; }
+.tabellone > .nota { display: block; margin: 0 0 14px; }
+
+.genera {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
-  margin-top: 30px;
+  margin-bottom: 14px;
 }
 
 .grande { padding: 14px 28px; font-size: 1.05rem; }

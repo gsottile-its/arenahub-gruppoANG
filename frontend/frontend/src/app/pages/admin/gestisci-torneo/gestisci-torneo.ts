@@ -7,10 +7,11 @@ import { AdminService, STATI_MODIFICABILI, TRANSIZIONI } from '../../../services
 import { TorneiService } from '../../../services/tornei';
 import { ToastService } from '../../../services/toast';
 import { TESTI_STATO_ISCRIZIONE, TESTI_STATO_TORNEO } from '../comune';
+import { TabelloneTorneo } from '../../../components/tabellone/tabellone';
 
 @Component({
   selector: 'app-gestisci-torneo',
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, TabelloneTorneo],
   templateUrl: './gestisci-torneo.html',
   styleUrl: './gestisci-torneo.css'
 })
@@ -38,6 +39,7 @@ export class GestisciTorneo implements OnInit {
   confermaAnnulla = signal(false);
   daRimuovere = signal<number | null>(null);
   tabelloneGenerato = signal(false);
+  versioneTabellone = signal(0);
 
   // prossimi stati possibili dalla tendina (l'annullamento ha il suo pulsante)
   statiSuccessivi = computed(() => {
@@ -146,6 +148,7 @@ export class GestisciTorneo implements OnInit {
       next: risposta => {
         this.inAzione.set(false);
         this.tabelloneGenerato.set(true);
+        this.versioneTabellone.update(v => v + 1);
         this.toast.mostra(`Tabellone generato: ${risposta.partiteCreate} partite nel primo turno. Ora puoi avviare il torneo.`, 'verde');
       },
       error: err => this.fallito(err, 'Generazione del tabellone non riuscita')

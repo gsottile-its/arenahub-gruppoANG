@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, delay, map, of } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { PaginaTornei, StatoTorneo, TorneoCard, TorneoDettaglio } from '../models/torneo';
+import { PaginaTornei, StatoTorneo, Tabellone, TorneoCard, TorneoDettaglio } from '../models/torneo';
 import { AuthService } from './auth';
 import { MockDb, RITARDO_MOCK, dettaglioACard, erroreMock, paginaMock } from './mock-db';
 
@@ -55,6 +55,14 @@ export class TorneiService {
 
       catchError(() => erroreMock(404, { errore: 'Torneo non trovato' }))
     );
+  }
+
+  getPartite(idTorneo: number): Observable<Tabellone> {
+    if (!environment.useMock) {
+      return this.http.get<Tabellone>(`${environment.apiUrl}/tornei/${idTorneo}/partite`);
+    }
+    const turni = this.mockDb.tabelloni()[idTorneo] ?? [];
+    return of<Tabellone>({ idTorneo, turni: structuredClone(turni) }).pipe(delay(RITARDO_MOCK));
   }
 
   listaMock(): Observable<TorneoCard[]> {

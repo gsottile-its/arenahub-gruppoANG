@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, timer, switchMap } from 'rxjs';
-import { IscrizioneAdmin, StatoIscrizione, TorneoCard, TorneoDettaglio } from '../models/torneo';
+import { IscrizioneAdmin, StatoIscrizione, TorneoCard, TorneoDettaglio, Turno } from '../models/torneo';
 import { Utente } from '../models/utente';
 
 // solo per i mock: ricorda iscrizioni e profilo finché il sito resta aperto
@@ -55,7 +55,7 @@ export class MockDb {
   // area admin: tornei creati o modificati, iscritti visti dall'admin e tabelloni generati
   readonly tornei = signal<Record<number, TorneoDettaglio>>({});
   readonly iscritti = signal<Record<number, IscrizioneAdmin[]>>({});
-  readonly tabelloni = signal<Record<number, boolean>>({});
+  readonly tabelloni = signal<Record<number, Turno[]>>({});
 
   private ultimoId = 100;
   nuovoId(): number {

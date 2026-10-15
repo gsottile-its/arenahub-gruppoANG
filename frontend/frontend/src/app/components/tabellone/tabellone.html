@@ -1,0 +1,59 @@
+@if (caricamento()) {
+  <p class="messaggio">Caricamento del tabellone…</p>
+} @else if (errore()) {
+  <p class="messaggio errore">{{ errore() }}</p>
+} @else if (turni().length === 0) {
+  <p class="messaggio">Il tabellone non è ancora stato generato.</p>
+} @else {
+  <div class="tabellone" [style.--turni]="turni().length">
+    @for (turno of turni(); track turno.round) {
+      <div class="turno">
+        <h3>{{ nomeTurno(turno.round) }}</h3>
+
+        <div class="partite">
+          @for (p of turno.partite; track p.id) {
+            <div class="partita" [class.conclusa]="p.stato === 'conclusa'">
+              @if (passaggioDiretto(p)) {
+                <div class="lato vincitore">
+                  <span class="nome">{{ p.partecipanteA!.nome }}</span>
+                </div>
+                <div class="lato nota">passa il turno</div>
+              } @else {
+                <div class="lato" [class.vincitore]="p.vincitore !== null && p.vincitore === p.partecipanteA?.idIscrizione">
+                  <span class="nome" [class.da-definire]="!p.partecipanteA">{{ p.partecipanteA?.nome ?? 'da definire' }}</span>
+                  <span class="punti">{{ p.punteggioA ?? '–' }}</span>
+                </div>
+                <div class="lato" [class.vincitore]="p.vincitore !== null && p.vincitore === p.partecipanteB?.idIscrizione">
+                  <span class="nome" [class.da-definire]="!p.partecipanteB">{{ p.partecipanteB?.nome ?? 'da definire' }}</span>
+                  <span class="punti">{{ p.punteggioB ?? '–' }}</span>
+                </div>
+
+                @if (puoInserire(p)) {
+                  @if (inModifica() === p.id) {
+                    <div class="modifica">
+                      <label>
+                        <span class="visivamente-nascosto">Punteggio di {{ p.partecipanteA!.nome }}</span>
+                        <input type="number" min="0" step="1" [(ngModel)]="punteggioA" />
+                      </label>
+                      <span>–</span>
+                      <label>
+                        <span class="visivamente-nascosto">Punteggio di {{ p.partecipanteB!.nome }}</span>
+                        <input type="number" min="0" step="1" [(ngModel)]="punteggioB" />
+                      </label>
+                      <button class="mini verde" [disabled]="salvataggio()" (click)="salva(p)">Salva</button>
+                      <button class="mini" [disabled]="salvataggio()" (click)="chiudi()">Annulla</button>
+                    </div>
+                  } @else {
+                    <button class="mini apri" (click)="apri(p)">
+                      {{ p.stato === 'conclusa' ? 'Correggi risultato' : 'Inserisci risultato' }}
+                    </button>
+                  }
+                }
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
