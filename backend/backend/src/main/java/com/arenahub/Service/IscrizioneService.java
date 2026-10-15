@@ -62,6 +62,7 @@ public class IscrizioneService {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "Le iscrizioni non sono aperte");
         }
 
+        // limite di tornei per utente, impostato dall'admin
         int max = configurazioneService.maxTorneiPerUtente();
         if (iscrizioneRepository.contaTorneiAttivi(utente.id()) >= max) {
             throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
@@ -130,3 +131,94 @@ public class IscrizioneService {
     @Transactional(readOnly = true)
     public IscrizioniPage elenco(Long idTorneo, String stato, int pagina) {
         if (!torneoRepository.existsById(idTorneo)) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato");
+        }
+        int p = Math.max(pagina, 1);
+        Pageable pageable = PageRequest.of(p - 1, DIMENSIONE_PAGINA, Sort.by(Sort.Direction.ASC, "id"));
+
+        Page<Iscrizione> risultato;
+        if (stato != null && !stato.isBlank()) {
+            IscrizioneStato filtro;
+            try {
+                filtro = IscrizioneStato.valueOf(stato);
+            } catch (IllegalArgumentException e) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Stato non valido");
+            }
+            risultato = iscrizioneRepository.findByTorneoIdAndStato(idTorneo, filtro, pageable);
+        } else {
+            risultato = iscrizioneRepository.findByTorneoIdAndStatoNot(idTorneo, IscrizioneStato.ritirata, pageable);
+        }
+
+        List<IscrizioneAdminResponse> righe = risultato.getContent().stream()
+                .map(i -> new IscrizioneAdminResponse(
+                        i.getId(),
+                        i.nomePartecipante(),
+                        i.getSquadra() != null ? "squadra" : "utente",
+                        i.getDataIscrizione(),
+                        i.getStato(),
+                        mapper.posizioneAttesa(i)))
+                .toList();
+        return new IscrizioniPage(p, risultato.getTotalPages(), righe);
+    }
+
+    public ConfermaResponse conferma(Long idIscrizione, IscrizioneStato stato) {
+        if (stato != IscrizioneStato.confermata) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Dati non validi");
+        }
+        Iscrizione i = trova(idIscrizione);
+        if (i.getStato() != IscrizioneStato.in_attesa) {
+            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Si possono confermare solo le iscrizioni in attesa");
+        }
+        i.setStato(IscrizioneStato.confermata);
+        return new ConfermaResponse(i.getId(), i.getTorneo().getId(), i.getStato());
+    }
+
+    public RitiroResponse ritira(Long idIscrizione, UtenteLoggato utente) {
+        Iscrizione i = trova(idIscrizione);
+        if (i.getStato() == IscrizioneStato.ritirata) {
+            throw new ApiException(HttpStatus.CONFLICT, "Iscrizione già ritirata");
+        }
+
+        boolean admin = utente.isAdmin();
+        if (!admin && !eTitolare(i, utente)) {
+            throw new ApiException(HttpStatus.FORBIDDEN, "Non puoi ritirare questa iscrizione");
+        }
+
+        Torneo t = torneoRepository.trovaPerAggiornamento(i.getTorneo().getId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Torneo non trovato"));
+        boolean iniziato = t.getStato() == TorneoStato.in_corso || t.getStato() == TorneoStato.concluso;
+        if (iniziato && !admin) {
+            throw new ApiException(HttpStatus.CONFLICT, "Il torneo è già iniziato");
+        }
+
+        boolean occupavaUnPosto = TorneoMapper.STATI_CHE_OCCUPANO.contains(i.getStato());
+        i.setStato(IscrizioneStato.ritirata);
+
+        RitiroResponse.Promossa promossa = null;
+        if (occupavaUnPosto) {
+            Optional<Iscrizione> prossima = iscrizioneRepository
+                    .findFirstByTorneoIdAndStatoOrderByDataIscrizioneAscIdAsc(t.getId(), IscrizioneStato.lista_attesa);
+            if (prossima.isPresent()) {
+                Iscrizione p = prossima.get();
+                p.setStato(IscrizioneStato.in_attesa);
+                promossa = new RitiroResponse.Promossa(p.getId(), p.nomePartecipante(), p.getStato());
+            }
+        }
+        return new RitiroResponse(i.getId(), t.getId(), i.getStato(), promossa);
+    }
+
+    private boolean eTitolare(Iscrizione i, UtenteLoggato utente) {
+        if (i.getUtente() != null) {
+            return i.getUtente().getId().equals(utente.id());
+        }
+        return membroRepository.findBySquadraIdAndUtenteId(i.getSquadra().getId(), utente.id())
+                .map(m -> m.getRuoloSquadra() == RuoloSquadra.capo_squadra)
+                .orElse(false);
+    }
+
+    private Iscrizione trova(Long id) {
+        return iscrizioneRepository.findById(id)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Iscrizione non trovata"));
+    }
+}
