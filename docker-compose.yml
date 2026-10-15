@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend/backend
+    env_file: .env            # DB_PASSWORD e JWT_SECRET (file non su GitHub)
+    environment:
+      # le immagini dei tornei vengono servite attraverso il frontend
+      APP_BASE_URL: http://localhost:4200
+      APP_CORS_ORIGINI: http://localhost:4200
+    volumes:
+      - uploads:/app/uploads  # le immagini restano anche se il container viene ricreato
+    ports:
+      - "8080:8080"           # facoltativo: serve solo per provare le API direttamente
+
+  frontend:
+    build: ./frontend/frontend
+    ports:
+      - "4200:80"             # il sito è su http://localhost:4200
+    depends_on:
+      - backend
+
+volumes:
+  uploads:
